@@ -1,9 +1,16 @@
+import 'package:cce_project/views/signup_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'views/login_page.dart';
 import 'views/welcome_page.dart';
 
-void main() {
+Future<void> main() async {
   runApp(const MyApp());
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -21,6 +28,7 @@ class MyApp extends StatelessWidget {
       // Named routes in the app
       routes: {
         '/loginPage': (context) => const LoginPage(),
+        '/signupPage': (context) => const SignUpPage(),
        },
     );
   }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../styles.dart';
@@ -11,11 +12,11 @@ class LoginPage extends StatefulWidget {
   }
 }
 
+// This builds the email textbox
 Widget buildEmail(TextEditingController emailController) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
-      //the text box
       Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
@@ -48,13 +49,12 @@ Widget buildEmail(TextEditingController emailController) {
   );
 }
 
+// This builds the password textbox
 Widget buildPassword(TextEditingController passwordController) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       const SizedBox(height: 10),
-
-      //password box
       Container(
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
@@ -81,11 +81,13 @@ Widget buildPassword(TextEditingController passwordController) {
                   labelStyle: loginPageText),
 
             ),
-          ))
+          )
+        )
     ],
   );
 }
 
+// This builds the login button
 Widget buildLoginButton(
     TextEditingController emailController,
     TextEditingController passwordController,
@@ -96,8 +98,39 @@ Widget buildLoginButton(
     children: <Widget>[
       const SizedBox(height: 50),
       OutlinedButton(
-        onPressed: () {
-          // TODO
+        onPressed: () async {
+          // When the user presses the login button
+          try {
+            UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: emailController.text,
+              password: passwordController.text
+            );
+            ScaffoldMessenger.of(context).showSnackBar( 
+                const SnackBar(
+                  backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                  content: Text(
+                    "Success", textAlign: TextAlign.center),
+                ),
+              );
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'user-not-found') {
+              ScaffoldMessenger.of(context).showSnackBar( 
+                const SnackBar(
+                  backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                  content: Text(
+                    "No user found for that email", textAlign: TextAlign.center),
+                ),
+              );
+            } else if (e.code == 'wrong-password') {
+                ScaffoldMessenger.of(context).showSnackBar( 
+                  const SnackBar(
+                    backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                    content: Text(
+                      "Wrong password provided for that user", textAlign: TextAlign.center),
+                  ),
+                );
+            }
+          }
         },
         style: OutlinedButton.styleFrom(
           side: BorderSide(
@@ -137,7 +170,8 @@ Widget buildLoginButton(
               )),
           TextButton(
               onPressed: () {
-                // TODO
+                //go to signup page
+                Navigator.pushNamed(context, '/signupPage');
               },
               child: Text(
                 'Sign up',
@@ -194,8 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 50),
                     buildEmail(emailController),
                     buildPassword(passwordController),
-                    buildLoginButton(
-                        emailController, passwordController, _formKey, context)
+                    buildLoginButton(emailController, passwordController, _formKey, context)
                   ],
                 ),
               ),

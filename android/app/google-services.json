@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "429842834488",
+    "project_id": "reddam-cce",
+    "storage_bucket": "reddam-cce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:429842834488:android:16928320b9b4a151e2b2cd",
+        "android_client_info": {
+          "package_name": "com.example.cce_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "429842834488-b3gtap3t4ld7krso19c1pr0h7rt8mtkl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6ld8EwVIRffOEalcahTdT77mu_qtQar0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "429842834488-b3gtap3t4ld7krso19c1pr0h7rt8mtkl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

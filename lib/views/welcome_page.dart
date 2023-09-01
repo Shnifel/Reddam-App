@@ -34,10 +34,11 @@ class WelcomePage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 10),
                       child: Text('Get Started',
-                                  style: welcomePageText.copyWith(
-                                      fontWeight: FontWeight.bold,
+                                  style: loginPageText.copyWith(
+                                      fontWeight: FontWeight.normal,
                                       color: Colors.white,
-                                    )),
+                                    )
+                                  ),
                     ),
                   ),
                 )
