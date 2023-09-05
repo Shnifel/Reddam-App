@@ -1,3 +1,5 @@
+import 'package:cce_project/arguments/user_info_arguments.dart';
+import 'package:cce_project/services/firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -101,17 +103,19 @@ Widget buildLoginButton(
         onPressed: () async {
           // When the user presses the login button
           try {
-            UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: emailController.text,
-              password: passwordController.text
-            );
-            ScaffoldMessenger.of(context).showSnackBar( 
-                const SnackBar(
-                  backgroundColor: Color.fromARGB(255, 123, 11, 24),
-                  content: Text(
-                    "Success", textAlign: TextAlign.center),
-                ),
-              );
+            UserCredential userCredential = await FirebaseAuth
+                .instance
+                .signInWithEmailAndPassword(
+                  email: emailController.text,
+                  password: passwordController.text);
+            
+            String userID = userCredential.user!.uid;
+
+            String name = (await FirestoreService(uid: userID).getUserData())!;
+
+            //go to test page
+            Navigator.pushNamed(context, '/studentDashboardPage', arguments: UserInfoArguments(userID, name));
+
           } on FirebaseAuthException catch (e) {
             if (e.code == 'user-not-found') {
               ScaffoldMessenger.of(context).showSnackBar( 

@@ -1,9 +1,11 @@
-import 'package:cce_project/views/signup_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'views/login_page.dart';
 import 'views/welcome_page.dart';
+import 'views/upload_page.dart';
+import 'views/signup_page.dart';
+import 'views/student_dashboard_page.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
@@ -29,6 +31,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/loginPage': (context) => const LoginPage(),
         '/signupPage': (context) => const SignUpPage(),
+        '/uploadPage': (context) => const ImageUploads(),
+        '/studentDashboardPage': (context) => const StudentDashboardPage(),
        },
     );
   }

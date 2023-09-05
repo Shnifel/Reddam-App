@@ -12,4 +12,17 @@ class FirestoreService {
   Future setUserData(Map<String, String?> data) async {
     return await collection.doc(uid).set(data);
   }
+
+  // Get the user name
+  Future<String?> getUserData() async {
+    try {
+      final snapshot = await collection.doc(uid).get();
+      final data = snapshot.data() as Map<String, dynamic>;
+      String name = data["firstName"] + ' ' + data["lastName"];
+      return name;
+    } catch (e) {
+      return 'Error fetching user';
+    }
+  }
+
 }

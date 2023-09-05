@@ -313,14 +313,14 @@ class _SignUpFormState extends State<SignUpForm> {
                                 "email": emailController.text,
                               });
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  backgroundColor:
-                                      Color.fromARGB(255, 123, 11, 24),
-                                  content: Text("Success",
-                                      textAlign: TextAlign.center),
-                                ),
-                              );
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   const SnackBar(
+                              //     backgroundColor:
+                              //         Color.fromARGB(255, 123, 11, 24),
+                              //     content: Text("Success",
+                              //         textAlign: TextAlign.center),
+                              //   ),
+                              // );
                             } on FirebaseAuthException catch (e) {
                               if (e.code == 'weak-password') {
                                 ScaffoldMessenger.of(context).showSnackBar(
