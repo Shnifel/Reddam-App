@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'package:cce_project/services/notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 
 class FirestoreService {
   final String uid; // Reference to the user id
@@ -7,6 +11,10 @@ class FirestoreService {
   // Reference the user collection
   final CollectionReference collection =
       FirebaseFirestore.instance.collection("Users");
+
+  // Reference to hours log colletion
+  final CollectionReference hoursCollection =
+      FirebaseFirestore.instance.collection("Logs");
 
   // Update the user's details
   Future setUserData(Map<String, String?> data) async {
@@ -25,4 +33,48 @@ class FirestoreService {
     }
   }
 
+  // Log user's hours claim
+  Future<void> logHours(String uid, String? hoursType, String? activity,
+      double hours, String? receiptNo, List<String> evidenceUrls,
+      {String? activeType, List<String> optionalUrls = const []}) async {
+    // Arguments supplied to firestore collection
+    Map<String, Object?> args = {
+      'uid': uid, // User id
+      'hours_type': hoursType, // Active or Passive
+      'activity': activity, // Specific Active or Passive Activity
+      'active_type': activeType, // Activity
+      'hours': hours, // Number of Hours
+      'receipt_no': receiptNo, // Receipt No
+      'evidenceUrls':
+          evidenceUrls, // List of urls where uploaded photos for evidence are stored
+      'optionalUrls':
+          optionalUrls, // List of urls for any other additional photos
+      'validated': false, // Set validated state to be false
+    };
+
+    try {
+      // Log the corresponding hours claim to firestore
+      await hoursCollection.add(args);
+
+      String? userName = await getUserData();
+      String body = "$userName has completed $hours hours of $activity";
+
+      // Send a notification to the admin of this upload
+      NotificationServices().sendNotification(uid, "New hours logged", body);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Uploading image utility
+  Future<String?> uploadFile(File? photo) async {
+    if (photo == null) return null; // Verify non-null File provided
+    final fileName = basename(photo.path); // Extract uploaded file name
+    final destination = 'files/$fileName'; // Set destination path
+    final ref = FirebaseStorage.instance
+        .ref(destination)
+        .child('file/'); // Create reference to firebase storage
+    await ref.putFile(photo); // Upload file
+    return await ref.getDownloadURL(); // Obtain download url
+  }
 }

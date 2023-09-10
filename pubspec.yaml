@@ -41,6 +41,9 @@ dependencies:
   image_picker: ^1.0.4
   firebase_storage: ^11.2.6
   primer_progress_bar: ^0.3.0
+  flutter_local_notifications: ^15.1.1
+  firebase_messaging: ^14.6.7
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:

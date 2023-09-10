@@ -1,7 +1,9 @@
 import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/firestore.dart';
+import 'package:cce_project/services/notifications.dart';
 import 'package:cce_project/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 
@@ -11,7 +13,8 @@ class StudentDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Extract the arguments passed to this page
-    UserInfoArguments arguments = ModalRoute.of(context)!.settings.arguments as UserInfoArguments;
+    UserInfoArguments arguments =
+        ModalRoute.of(context)!.settings.arguments as UserInfoArguments;
     String userID = arguments.userID;
     String name = arguments.name;
 
@@ -23,7 +26,6 @@ class StudentDashboardPage extends StatelessWidget {
 }
 
 class StudentDashboard extends StatefulWidget {
-
   //We have to initialise the variables
   String userID = '';
   String name = '';
@@ -39,7 +41,6 @@ class StudentDashboard extends StatefulWidget {
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
-
   //We have to initialise the variable before getting it from the constructor
   String userID = '';
   String name = '';
@@ -51,16 +52,21 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }
 
   List<Segment> segments = [
-    Segment(value: 30, color: primaryColour, label: const Text("Passive Hours")),
-    Segment(value: 54, color: secondaryColour, label: const Text("Active Hours")),
+    Segment(
+        value: 30, color: primaryColour, label: const Text("Passive Hours")),
+    Segment(
+        value: 54, color: secondaryColour, label: const Text("Active Hours")),
   ];
 
   // String name = '';
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getData();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    NotificationServices notif = NotificationServices();
+    notif.requestPermission();
+    notif.getToken();
+    notif.initInfo();
+  }
 
   // void getData() async {
   //   //Retrieve the users full name
@@ -70,7 +76,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   @override
   Widget build(BuildContext context) {
-
     // Hours progress bar
     PrimerProgressBar progressBar = PrimerProgressBar(
       segments: segments,
@@ -86,14 +91,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
           child: Column(
             // Add spacing between column elements
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget> [
-
+            children: <Widget>[
               // Students name
               FittedBox(
-                // This ensures that the student's name is resized to fit the screen
-                fit: BoxFit.cover, 
-                child: Text(name, style: loginPageText.copyWith(fontSize: 200))
-              ),
+                  // This ensures that the student's name is resized to fit the screen
+                  fit: BoxFit.cover,
+                  child:
+                      Text(name, style: loginPageText.copyWith(fontSize: 200))),
 
               // Reddam Crest
               SizedBox(
@@ -105,13 +109,16 @@ class _StudentDashboardState extends State<StudentDashboard> {
               Text("You are currently working towards", style: loginPageText),
 
               // Current objective
-              Text("Full Colours", style: loginPageText,),
+              Text(
+                "Full Colours",
+                style: loginPageText,
+              ),
 
               // Progress bar
               Container(
                 child: progressBar,
               ),
-              
+
               // Active hour percentage
               Container(
                 width: 150,
@@ -124,12 +131,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     color: secondaryColour,
                   ),
                 ),
-                child: Text("80% \n Active", style: loginPageText, textAlign: TextAlign.center),
+                child: Text("80% \n Active",
+                    style: loginPageText, textAlign: TextAlign.center),
               ),
 
               // Log hours button
               OutlinedButton(
-                onPressed: (){},
+                onPressed: () {
+                  NotificationServices().sendNotification(
+                      FirebaseAuth.instance.currentUser!.uid,
+                      "Test message",
+                      "HI");
+                  Navigator.pushNamed(context, '/logHoursPage');
+                },
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
                     color: primaryColour,
@@ -145,7 +159,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Center(
                             child: Text(
-                              'log hours',
+                              'Log Hours',
                               style: loginPageText.copyWith(
                                 fontSize: 20,
                               ),

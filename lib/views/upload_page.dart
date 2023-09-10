@@ -5,18 +5,25 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 
 class ImageUploads extends StatefulWidget {
-  const ImageUploads({Key? key}) : super(key: key);
+  final Function(File?) onChange;
+  final File? photo;
+  const ImageUploads({required this.onChange, Key? key, File? this.photo})
+      : super(key: key);
 
   @override
   _ImageUploadsState createState() => _ImageUploadsState();
 }
 
 class _ImageUploadsState extends State<ImageUploads> {
-  FirebaseStorage storage =
-      FirebaseStorage.instance;
-
+  FirebaseStorage storage = FirebaseStorage.instance;
   File? _photo;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _photo = widget.photo;
+  }
 
   // This is called if the user decides to select a photo from their gallery
   Future imgFromGallery(BuildContext context) async {
@@ -25,17 +32,16 @@ class _ImageUploadsState extends State<ImageUploads> {
     setState(() {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
-        uploadFile(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar( 
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Color.fromARGB(255, 123, 11, 24),
-            content: Text(
-              "No image selected", textAlign: TextAlign.center),
+            content: Text("No image selected", textAlign: TextAlign.center),
           ),
         );
       }
     });
+    widget.onChange(_photo);
   }
 
   // This is called if the user decides to take a photo
@@ -45,17 +51,16 @@ class _ImageUploadsState extends State<ImageUploads> {
     setState(() {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
-        uploadFile(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar( 
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Color.fromARGB(255, 123, 11, 24),
-            content: Text(
-              "No image selected", textAlign: TextAlign.center),
+            content: Text("No image selected", textAlign: TextAlign.center),
           ),
         );
       }
     });
+    widget.onChange(_photo);
   }
 
   // Upload the file to firebase storage
@@ -65,64 +70,47 @@ class _ImageUploadsState extends State<ImageUploads> {
     final destination = 'files/$fileName';
 
     try {
-      final ref = FirebaseStorage.instance
-          .ref(destination)
-          .child('file/');
+      final ref = FirebaseStorage.instance.ref(destination).child('file/');
       await ref.putFile(_photo!);
+      print(await ref.getDownloadURL());
     } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar( 
-          const SnackBar(
-            backgroundColor: Color.fromARGB(255, 123, 11, 24),
-            content: Text(
-              "An error occurred", textAlign: TextAlign.center),
-          ),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color.fromARGB(255, 123, 11, 24),
+          content: Text("An error occurred", textAlign: TextAlign.center),
+        ),
+      );
     }
+  }
+
+  // Extract given data
+  File? getPhoto() {
+    return _photo;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 32,
-          ),
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                _showPicker(context);
-              },
-              child: CircleAvatar(
-                radius: 55,
-                backgroundColor: const Color(0xffFDCF09),
-                child: _photo != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.file(
-                          _photo!,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.fitHeight,
-                        ),
-                      )
-                    : Container(
-                        decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(50)),
-                        width: 100,
-                        height: 100,
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: Colors.grey[800],
-                        ),
-                      ),
+    return Column(
+      children: <Widget>[
+        GestureDetector(
+          onTap: () {
+            _showPicker(context);
+          },
+          child: Container(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+              ),
+              width: 150,
+              height: 150,
+              child: Icon(
+                Icons.camera_alt,
+                color: Colors.grey[800],
               ),
             ),
-          )
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 
