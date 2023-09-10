@@ -14,6 +14,9 @@ class LoginPage extends StatefulWidget {
   }
 }
 
+//test for current user
+String? _roleValue;
+
 // This builds the email textbox
 Widget buildEmail(TextEditingController emailController) {
   return Column(
@@ -32,19 +35,16 @@ Widget buildEmail(TextEditingController emailController) {
             child: TextFormField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
-
               style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 17,
               ),
-
               decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   labelText: "Email",
                   labelStyle: loginPageText),
-
             ),
           ))
     ],
@@ -69,22 +69,18 @@ Widget buildPassword(TextEditingController passwordController) {
             child: TextFormField(
               obscureText: true,
               controller: passwordController,
-
               style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 17,
               ),
-
               decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   labelText: "Password",
                   labelStyle: loginPageText),
-
             ),
-          )
-        )
+          ))
     ],
   );
 }
@@ -95,7 +91,6 @@ Widget buildLoginButton(
     TextEditingController passwordController,
     GlobalKey<FormState> formKey,
     BuildContext context) {
-
   return Column(
     children: <Widget>[
       const SizedBox(height: 50),
@@ -103,36 +98,38 @@ Widget buildLoginButton(
         onPressed: () async {
           // When the user presses the login button
           try {
-            UserCredential userCredential = await FirebaseAuth
-                .instance
+            UserCredential userCredential = await FirebaseAuth.instance
                 .signInWithEmailAndPassword(
-                  email: emailController.text,
-                  password: passwordController.text);
-            
+                    email: emailController.text,
+                    password: passwordController.text);
+
             String userID = userCredential.user!.uid;
 
             String name = (await FirestoreService(uid: userID).getUserData())!;
 
-            //go to test page
-            Navigator.pushNamed(context, '/studentDashboardPage', arguments: UserInfoArguments(userID, name));
+            Navigator.pushNamed(context, '/studentDashboardPage',
+                arguments: UserInfoArguments(userID, name));
 
+            //go to test page
+            /*Navigator.pushNamed(context, '/studentDashboardPage',
+                arguments: UserInfoArguments(userID, name));*/
           } on FirebaseAuthException catch (e) {
             if (e.code == 'user-not-found') {
-              ScaffoldMessenger.of(context).showSnackBar( 
+              ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   backgroundColor: Color.fromARGB(255, 123, 11, 24),
-                  content: Text(
-                    "No user found for that email", textAlign: TextAlign.center),
+                  content: Text("No user found for that email",
+                      textAlign: TextAlign.center),
                 ),
               );
             } else if (e.code == 'wrong-password') {
-                ScaffoldMessenger.of(context).showSnackBar( 
-                  const SnackBar(
-                    backgroundColor: Color.fromARGB(255, 123, 11, 24),
-                    content: Text(
-                      "Wrong password provided for that user", textAlign: TextAlign.center),
-                  ),
-                );
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                  content: Text("Wrong password provided for that user",
+                      textAlign: TextAlign.center),
+                ),
+              );
             }
           }
         },
@@ -168,9 +165,9 @@ Widget buildLoginButton(
         children: <Widget>[
           Text("Don't have an account?",
               style: loginPageText.copyWith(
-                    fontSize: 14,
-                    color: Colors.black,
-                    fontStyle: FontStyle.italic,
+                fontSize: 14,
+                color: Colors.black,
+                fontStyle: FontStyle.italic,
               )),
           TextButton(
               onPressed: () {
@@ -232,7 +229,8 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 50),
                     buildEmail(emailController),
                     buildPassword(passwordController),
-                    buildLoginButton(emailController, passwordController, _formKey, context)
+                    buildLoginButton(
+                        emailController, passwordController, _formKey, context)
                   ],
                 ),
               ),
