@@ -6,6 +6,7 @@ import 'views/welcome_page.dart';
 import 'views/upload_page.dart';
 import 'views/signup_page.dart';
 import 'views/student_dashboard_page.dart';
+import 'views/teacher_dashboard_page.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
         '/signupPage': (context) => const SignUpPage(),
         '/uploadPage': (context) => const ImageUploads(),
         '/studentDashboardPage': (context) => const StudentDashboardPage(),
-       },
+        '/teacherDashboardPage': (context) => const TeacherDashboardPage(),
+      },
     );
   }
 }
