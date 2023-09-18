@@ -142,7 +142,7 @@ Widget buildLoginButton(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Center(
                     child: Text(
-                      'log in',
+                      'Log in',
                       style: loginPageText.copyWith(
                         fontSize: 30,
                       ),
@@ -153,6 +153,42 @@ Widget buildLoginButton(
             ))
           ],
         ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          TextButton(
+              onPressed: () {
+                try {
+                  FirebaseAuth.instance
+                      .sendPasswordResetEmail(email: emailController.text);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Color.fromARGB(255, 40, 189, 11),
+                      content: Text(
+                          "Please check your emails to reset your password",
+                          textAlign: TextAlign.center),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                      content: Text("Invalid email specified",
+                          textAlign: TextAlign.center),
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'Forgot Password',
+                style: loginPageText.copyWith(
+                    fontSize: 14,
+                    color: secondaryColour,
+                    fontStyle: FontStyle.italic),
+                textAlign: TextAlign.right,
+              )),
+        ],
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

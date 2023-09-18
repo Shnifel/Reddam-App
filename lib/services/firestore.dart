@@ -17,7 +17,7 @@ class FirestoreService {
       FirebaseFirestore.instance.collection("Logs");
 
   // Update the user's details
-  Future setUserData(Map<String, String?> data) async {
+  Future setUserData(Map<String, Object?> data) async {
     return await collection.doc(uid).set(data);
   }
 

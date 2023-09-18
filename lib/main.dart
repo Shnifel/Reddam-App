@@ -6,7 +6,7 @@ import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'views/login_page.dart';
 import 'views/welcome_page.dart';
-import 'views/upload_page.dart';
+import 'views/image_upload.dart';
 import 'views/signup_page.dart';
 import 'views/student_dashboard_page.dart';
 

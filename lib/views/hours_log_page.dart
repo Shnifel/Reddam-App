@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cce_project/helpers/dropdown_helpers.dart';
 import 'package:cce_project/services/firestore.dart';
-import 'package:cce_project/views/upload_page.dart';
+import 'package:cce_project/views/image_upload.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../styles.dart';

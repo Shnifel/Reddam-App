@@ -311,6 +311,7 @@ class _SignUpFormState extends State<SignUpForm> {
                                 "class": _classValue,
                                 "house": _houseValue,
                                 "email": emailController.text,
+                                "teacher": false,
                               });
 
                               // ScaffoldMessenger.of(context).showSnackBar(
