@@ -9,6 +9,7 @@ import 'views/welcome_page.dart';
 import 'views/image_upload.dart';
 import 'views/signup_page.dart';
 import 'views/student_dashboard_page.dart';
+import 'views/teacher_dashboard_page.dart';
 
 Future<void> backgroundHandler(RemoteMessage message) async {
   String? title = message.notification!.title;
@@ -41,6 +42,8 @@ class MyApp extends StatelessWidget {
         '/loginPage': (context) => const LoginPage(),
         '/signupPage': (context) => const SignUpPage(),
         '/studentDashboardPage': (context) => const StudentDashboardPage(),
+        '/teacherDashboardPage': (context) => const TeacherDashboardPage(),
+      },
         '/logHoursPage': (context) => const LogHoursPage(),
       },
     );

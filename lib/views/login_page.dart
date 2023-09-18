@@ -14,6 +14,9 @@ class LoginPage extends StatefulWidget {
   }
 }
 
+//test for current user
+String? _roleValue;
+
 // This builds the email textbox
 Widget buildEmail(TextEditingController emailController) {
   return Column(
@@ -104,6 +107,9 @@ Widget buildLoginButton(
 
             String name = (await FirestoreService(uid: userID).getUserData())!;
 
+            Navigator.pushNamed(context, '/studentDashboardPage',
+                arguments: UserInfoArguments(userID, name));
+
             //go to test page
             Navigator.pushNamed(context, '/studentDashboardPage',
                 arguments: UserInfoArguments(userID, name));
@@ -117,6 +123,13 @@ Widget buildLoginButton(
                 ),
               );
             } else if (e.code == 'wrong-password') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                  content: Text("Wrong password provided for that user",
+                      textAlign: TextAlign.center),
+                ),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   backgroundColor: Color.fromARGB(255, 123, 11, 24),

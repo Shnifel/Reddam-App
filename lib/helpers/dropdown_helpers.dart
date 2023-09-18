@@ -9,6 +9,8 @@ class DropdownListHelper {
     'Ulster'
   ];
   static final List<String> _classes = ['R', 'E', 'D', 'A', 'M', 'H'];
+
+  static final List<String> _roles = ['Teacher', 'Student'];
   static final List<String> _hoursTypes = ['Active', 'Passive'];
   static final List<String> _activeTypes = ['Collection', 'Time'];
   static final List<String> _passiveChoices = ['Donations', 'External'];
