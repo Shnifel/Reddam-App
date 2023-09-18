@@ -1,4 +1,3 @@
-import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/helpers/dropdown_helpers.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,8 +36,6 @@ class _SignUpFormState extends State<SignUpForm> {
   TextEditingController houseController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  TextEditingController rolesController = TextEditingController();
-  TextEditingController teacherRoleController = TextEditingController();
 
   //Create a global key that uniquely identifies the Form widget
   //and allows validation of the form.
@@ -46,9 +43,6 @@ class _SignUpFormState extends State<SignUpForm> {
   String? _houseValue;
   String? _gradeValue;
   String? _classValue;
-  String? _roleValue;
-  String userID = " ";
-  String name = " ";
 
   @override
   // Everything below determines how the page is displayed
@@ -223,39 +217,6 @@ class _SignUpFormState extends State<SignUpForm> {
                               labelStyle: loginPageText),
                         ))),
 
-                //Role drop down
-                Container(
-                    margin: const EdgeInsets.only(bottom: 10.5),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: secondaryColour.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    height: 60,
-                    child: Material(
-                        color: Colors.transparent,
-                        child: DropdownButtonFormField(
-                          value: _roleValue,
-                          items: DropdownListHelper.roles,
-                          onChanged: (value) => setState(() {
-                            _roleValue = value;
-                            _formKey.currentState?.validate();
-                            rolesController.text = value.toString();
-                          }),
-                          validator: (value) {
-                            if (value == null) {
-                              return "Please select a role";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              labelText: "Role",
-                              labelStyle: loginPageText),
-                        ))),
-
                 // Email address textbox
                 Container(
                     margin: const EdgeInsets.only(bottom: 10.5),
@@ -332,162 +293,15 @@ class _SignUpFormState extends State<SignUpForm> {
                           ),
                         ),
                         onPressed: () async {
-                          //Teacher validation password
-                          if (_roleValue == "Teacher") {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    scrollable: true,
-                                    title: const Text("Teacher password"),
-                                    content: TextFormField(
-                                      obscureText: true,
-                                      controller: teacherRoleController,
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 17,
-                                      ),
-                                      decoration: InputDecoration(
-                                          labelText: "Password",
-                                          labelStyle: loginPageText),
-                                    ),
-                                    actions: [
-                                      ElevatedButton(
-                                        child: const Text("Enter"),
-                                        onPressed: () async {
-                                          if (teacherRoleController.text ==
-                                              "123") {
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              //If the form is valid
-                                              try {
-                                                UserCredential userCredential =
-                                                    await FirebaseAuth.instance
-                                                        .createUserWithEmailAndPassword(
-                                                            email:
-                                                                emailController
-                                                                    .text,
-                                                            password:
-                                                                passwordController
-                                                                    .text);
-
-                                                userID =
-                                                    userCredential.user!.uid;
-
-                                                FirestoreService(uid: userID)
-                                                    .setUserData({
-                                                  "firstName":
-                                                      firstNameController.text,
-                                                  "lastName":
-                                                      lastNameController.text,
-                                                  "grade": _gradeValue,
-                                                  "class": _classValue,
-                                                  "house": _houseValue,
-                                                  "email": emailController.text,
-                                                  "role": _roleValue,
-                                                });
-
-                                                Navigator.pushNamed(context,
-                                                    '/teacherDashboardPage',
-                                                    arguments: UserInfoArguments(
-                                                        userID,
-                                                        (await FirestoreService(
-                                                                uid: userID)
-                                                            .getUserData())!));
-
-                                                // ScaffoldMessenger.of(context).showSnackBar(
-                                                //   const SnackBar(
-                                                //     backgroundColor:
-                                                //         Color.fromARGB(255, 123, 11, 24),
-                                                //     content: Text("Success",
-                                                //         textAlign: TextAlign.center),
-                                                //   ),
-                                                // );
-                                              } on FirebaseAuthException catch (e) {
-                                                if (e.code == 'weak-password') {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      backgroundColor:
-                                                          Color.fromARGB(
-                                                              255, 123, 11, 24),
-                                                      content: Text(
-                                                          "The password provided is too weak",
-                                                          textAlign:
-                                                              TextAlign.center),
-                                                    ),
-                                                  );
-                                                } else if (e.code ==
-                                                    'email-already-in-use') {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      backgroundColor:
-                                                          Color.fromARGB(
-                                                              255, 123, 11, 24),
-                                                      content: Text(
-                                                          "An account already exists for that email",
-                                                          textAlign:
-                                                              TextAlign.center),
-                                                    ),
-                                                  );
-                                                } else if (e.code ==
-                                                    'invalid-email') {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      backgroundColor:
-                                                          Color.fromARGB(
-                                                              255, 123, 11, 24),
-                                                      content: Text(
-                                                          "The email domain is invalid",
-                                                          textAlign:
-                                                              TextAlign.center),
-                                                    ),
-                                                  );
-                                                }
-                                              } catch (e) {
-                                                print(e);
-                                              }
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  backgroundColor:
-                                                      Color.fromARGB(
-                                                          255, 123, 11, 24),
-                                                  content: Text(
-                                                      "One or more fields are invalid",
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                ),
-                                              );
-                                            }
-                                          } else {
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const SignUpPage()),
-                                              (Route<dynamic> route) => false,
-                                            );
-                                          }
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          }
                           // Validate returns true if the form is valid, or false otherwise.
-                          else if (_roleValue == "Student") {
-                            if (_formKey.currentState!.validate()) {
-                              //If the form is valid
-                              try {
-                                UserCredential userCredential =
-                                    await FirebaseAuth.instance
-                                        .createUserWithEmailAndPassword(
-                                            email: emailController.text,
-                                            password: passwordController.text);
+                          if (_formKey.currentState!.validate()) {
+                            //If the form is valid
+                            try {
+                              UserCredential userCredential = await FirebaseAuth
+                                  .instance
+                                  .createUserWithEmailAndPassword(
+                                      email: emailController.text,
+                                      password: passwordController.text);
 
                               String userID = userCredential.user!.uid;
                               FirestoreService(uid: userID).setUserData({
