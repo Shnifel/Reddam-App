@@ -21,6 +21,12 @@ class FirestoreService {
     return await collection.doc(uid).set(data);
   }
 
+  // Extract data based on a document id
+  Future<Map<String, dynamic>> getData(String? id) async {
+    final snapshot = await collection.doc(id).get();
+    return snapshot.data() as Map<String, dynamic>;
+  }
+
   // Get the user name
   Future<String?> getUserData() async {
     try {

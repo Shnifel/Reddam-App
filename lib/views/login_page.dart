@@ -107,12 +107,20 @@ Widget buildLoginButton(
 
             String name = (await FirestoreService(uid: userID).getUserData())!;
 
-            Navigator.pushNamed(context, '/studentDashboardPage',
-                arguments: UserInfoArguments(userID, name));
+            Map<String, dynamic> user_data =
+                (await FirestoreService(uid: userID).getData(userID))!;
+
+            bool isTeacher = user_data["teacher"];
+
+            if (isTeacher) {
+              Navigator.pushNamed(context, '/teacherDashboardPage',
+                  arguments: UserInfoArguments(userID, name));
+            } else {
+              Navigator.pushNamed(context, '/studentDashboardPage',
+                  arguments: UserInfoArguments(userID, name));
+            }
 
             //go to test page
-            Navigator.pushNamed(context, '/studentDashboardPage',
-                arguments: UserInfoArguments(userID, name));
           } on FirebaseAuthException catch (e) {
             if (e.code == 'user-not-found') {
               ScaffoldMessenger.of(context).showSnackBar(
