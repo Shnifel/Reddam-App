@@ -85,7 +85,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
       legendStyle: const SegmentedBarLegendStyle(spacing: 80),
     );
     return Scaffold(
-      body: Center(
+        body: Center(
+      child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 100, 20, 10),
           child: Column(
@@ -175,6 +176,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
           ),
         ),
       ),
-    );
+    ));
   }
 }

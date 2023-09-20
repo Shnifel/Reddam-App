@@ -30,13 +30,15 @@ class LogHoursForm extends StatefulWidget {
 }
 
 class _LogHoursFormState extends State<LogHoursForm> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _hoursController = TextEditingController();
-  final TextEditingController _receiptController = TextEditingController();
-  List<File?> evidence = [];
-  List<File?> optional = [];
-  String? _typeSelected;
-  String? _typeActive;
+  final _formKey = GlobalKey<FormState>(); // Form handler
+  final TextEditingController _hoursController =
+      TextEditingController(); // Hours entered
+  final TextEditingController _receiptController =
+      TextEditingController(); // Receipt number entered
+  List<File?> evidence = []; // Files uploaded with images of evidence
+  List<File?> optional = []; // Optional photos for gallery
+  String? _typeSelected; // Active or Passive
+  String? _typeActive; // Specific active
   String? _activeChoice;
   bool _isLoading = false;
 
