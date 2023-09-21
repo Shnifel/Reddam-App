@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Shnifel/Reddam-App.svg?token=7jrfMQ7E2uYuS56iwsnp&branch=Jamie_Student_Dashboard)](https://app.travis-ci.com/Shnifel/Reddam-App)
+
 # cce_project
 
 A new Flutter project.
@@ -14,6 +16,3 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-
-
-[![Build Status](https://travis-ci.com/Shnifel/Reddam-App.svg?token=7jrfMQ7E2uYuS56iwsnp&branch=Jamie_Student_Dashboard)](https://app.travis-ci.com/Shnifel/Reddam-App)
