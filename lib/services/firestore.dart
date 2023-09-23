@@ -41,7 +41,7 @@ class FirestoreService {
 
   // Log user's hours claim
   Future<void> logHours(String uid, String? hoursType, String? activity,
-      double hours, String? receiptNo, List<String> evidenceUrls,
+      double amount, String? receiptNo, List<String> evidenceUrls,
       {String? activeType, List<String> optionalUrls = const []}) async {
     // Arguments supplied to firestore collection
     Map<String, Object?> args = {
@@ -49,7 +49,7 @@ class FirestoreService {
       'hours_type': hoursType, // Active or Passive
       'activity': activity, // Specific Active or Passive Activity
       'active_type': activeType, // Activity
-      'hours': hours, // Number of Hours
+      'amount': amount, // Number of Hours
       'receipt_no': receiptNo, // Receipt No
       'evidenceUrls':
           evidenceUrls, // List of urls where uploaded photos for evidence are stored
@@ -63,7 +63,7 @@ class FirestoreService {
       await hoursCollection.add(args);
 
       String? userName = await getUserData();
-      String body = "$userName has completed $hours hours of $activity";
+      String body = "$userName has completed $amount hours of $activity";
 
       // Send a notification to the admin of this upload
       NotificationServices().sendNotification(uid, "New hours logged", body);

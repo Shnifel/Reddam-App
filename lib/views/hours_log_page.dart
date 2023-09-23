@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:cce_project/data/data.dart';
 import 'package:cce_project/helpers/dropdown_helpers.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/views/image_upload.dart';
@@ -60,11 +60,128 @@ class _LogHoursFormState extends State<LogHoursForm> {
     }
   }
 
+  // Delete an image
+  void _showPicker(context, int i, bool isEvidence) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                    leading: const Icon(Icons.delete),
+                    title: const Text('Delete image'),
+                    onTap: () {
+                      setState(() {
+                        if (isEvidence) {
+                          evidence.removeAt(i);
+                        } else {
+                          optional.removeAt(i);
+                        }
+                      });
+                      Navigator.of(context).pop();
+                    }),
+              ],
+            ),
+          );
+        });
+  }
+
+  // Submit handler
+  void handleSubmit() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Validate returns true if the form is valid, or false otherwise.
+      if (_formKey.currentState!.validate() && evidence.length >= 1) {
+        // User id
+        String uid = FirebaseAuth.instance.currentUser!.uid;
+
+        //FirestoreService ref
+        FirestoreService firestore = FirestoreService(uid: uid);
+
+        List<String> evidenceUrls = [];
+        List<String> optionalUrls = [];
+
+        // Upload all images to cloud storage
+        for (int i = 0; i < evidence.length; i++) {
+          String? url = await firestore.uploadFile(evidence[i]);
+          if (url != null) {
+            evidenceUrls.add(url);
+          }
+        }
+
+        //Upload all additional images to cloud storage
+        for (int i = 0; i < optional.length; i++) {
+          String? url = await firestore.uploadFile(optional[i]);
+          if (url != null) {
+            optionalUrls.add(url);
+          }
+        }
+
+        double amount = double.parse(_hoursController.text);
+        double excess = 0;
+        if (Data.LOG_BOUNDS[_activeChoice] != null) {
+          int bounds = Data.LOG_BOUNDS[_activeChoice]!;
+          if (amount > bounds) {
+            excess = amount - bounds;
+            amount = bounds.toDouble();
+          }
+        }
+
+        // Record hours and send notification of new hours logged
+        await firestore.logHours(uid, _typeSelected, _typeActive, amount,
+            _receiptController.text, evidenceUrls,
+            activeType: _activeChoice, optionalUrls: optionalUrls);
+
+        if (excess != 0) {
+          // Remove excess amount and allocate as passive hours
+          await firestore.logHours(uid, 'Passive', _activeChoice, excess,
+              _receiptController.text, evidenceUrls);
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Color.fromARGB(255, 26, 231, 43),
+          content: Text(
+            "Successfully logged ! Keep up the good work",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+          ),
+        ));
+
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color.fromARGB(255, 123, 11, 24),
+            content: Text("One or more fields are invalid",
+                textAlign: TextAlign.center),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color.fromARGB(255, 123, 11, 24),
+          content: Text("An error has occurred. Please try again",
+              textAlign: TextAlign.center),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.only(right: 20, left: 20, top: 25),
         child: Form(
+            autovalidateMode: AutovalidateMode.disabled,
             key: _formKey,
             child: ListView(
               children: <Widget>[
@@ -210,7 +327,7 @@ class _LogHoursFormState extends State<LogHoursForm> {
                   children: <Widget>[
                     Expanded(
                         flex: 0,
-                        child: Text('Step 2 : Enter the number of hours',
+                        child: Text('Step 2 : Enter the amount',
                             style: loginPageText.copyWith(
                                 fontSize: 14, color: primaryColour))),
                     const SizedBox(
@@ -241,10 +358,13 @@ class _LogHoursFormState extends State<LogHoursForm> {
                         controller: _hoursController,
                         validator: (value) {
                           if (value == "") {
-                            return "Please enter the number hours";
+                            return "Compulsory field";
                           }
                           return null;
                         },
+                        onChanged: (value) => setState(() {
+                          _formKey.currentState?.validate();
+                        }),
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
                         style: const TextStyle(
@@ -255,7 +375,9 @@ class _LogHoursFormState extends State<LogHoursForm> {
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 10),
-                            labelText: "Enter the number of hours completed",
+                            labelText: _typeActive == 'Collection'
+                                ? 'Enter the amount collected'
+                                : 'Enter the number of hours completed',
                             labelStyle: loginPageText),
                       ),
                     )),
@@ -301,6 +423,9 @@ class _LogHoursFormState extends State<LogHoursForm> {
                           }
                           return null;
                         },
+                        onChanged: (value) => setState(() {
+                          _formKey.currentState?.validate();
+                        }),
                         style: const TextStyle(
                           color: Colors.black87,
                           fontSize: 17,
@@ -348,29 +473,32 @@ class _LogHoursFormState extends State<LogHoursForm> {
 
                 // Display all uploaded images
                 for (int i = 0; i < evidence.length; i++)
-                  Container(
-                    margin: const EdgeInsets.only(top: 5, bottom: 5),
-                    alignment: Alignment.centerLeft,
-                    child: evidence[i] != null
-                        ? ClipRRect(
-                            child: Image.file(
-                              evidence[i]!,
+                  GestureDetector(
+                    onTap: () => {_showPicker(context, i, true)},
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 5, bottom: 5),
+                      alignment: Alignment.centerLeft,
+                      child: evidence[i] != null
+                          ? ClipRRect(
+                              child: Image.file(
+                                evidence[i]!,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.fitHeight,
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                              ),
                               width: 150,
                               height: 150,
-                              fit: BoxFit.fitHeight,
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.grey[800],
+                              ),
                             ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                            ),
-                            width: 150,
-                            height: 150,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.grey[800],
-                            ),
-                          ),
+                    ),
                   ),
 
                 // Upload any additional photos field
@@ -406,29 +534,32 @@ class _LogHoursFormState extends State<LogHoursForm> {
 
                 // Display all uploaded images
                 for (int i = 0; i < optional.length; i++)
-                  Container(
-                    margin: const EdgeInsets.only(top: 5, bottom: 5),
-                    alignment: Alignment.centerLeft,
-                    child: optional[i] != null
-                        ? ClipRRect(
-                            child: Image.file(
-                              optional[i]!,
+                  GestureDetector(
+                    onTap: () => {_showPicker(context, i, true)},
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 5, bottom: 5),
+                      alignment: Alignment.centerLeft,
+                      child: optional[i] != null
+                          ? ClipRRect(
+                              child: Image.file(
+                                optional[i]!,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.fitHeight,
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                              ),
                               width: 150,
                               height: 150,
-                              fit: BoxFit.fitHeight,
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.grey[800],
+                              ),
                             ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                            ),
-                            width: 150,
-                            height: 150,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.grey[800],
-                            ),
-                          ),
+                    ),
                   ),
 
                 // Submit button for logging hours
@@ -442,91 +573,7 @@ class _LogHoursFormState extends State<LogHoursForm> {
                           width: 1.5,
                         ),
                       ),
-                      onPressed: () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-
-                        try {
-                          // Validate returns true if the form is valid, or false otherwise.
-                          if (_formKey.currentState!.validate() &&
-                              evidence.length >= 1) {
-                            // User id
-                            String uid = FirebaseAuth.instance.currentUser!.uid;
-
-                            //FirestoreService ref
-                            FirestoreService firestore =
-                                FirestoreService(uid: uid);
-
-                            List<String> evidenceUrls = [];
-                            List<String> optionalUrls = [];
-
-                            // Upload all images to cloud storage
-                            for (int i = 0; i < evidence.length; i++) {
-                              String? url =
-                                  await firestore.uploadFile(evidence[i]);
-                              if (url != null) {
-                                evidenceUrls.add(url);
-                              }
-                            }
-
-                            //Upload all additional images to cloud storage
-                            for (int i = 0; i < optional.length; i++) {
-                              String? url =
-                                  await firestore.uploadFile(optional[i]);
-                              if (url != null) {
-                                optionalUrls.add(url);
-                              }
-                            }
-
-                            // Record hours and send notification of new hours logged
-                            await firestore.logHours(
-                                uid,
-                                _typeSelected,
-                                _typeActive,
-                                double.parse(_hoursController.text),
-                                _receiptController.text,
-                                evidenceUrls,
-                                activeType: _activeChoice,
-                                optionalUrls: optionalUrls);
-
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              backgroundColor: Color.fromARGB(255, 26, 231, 43),
-                              content: Text(
-                                "Successfully logged ! Keep up the good work",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Color.fromARGB(0, 0, 0, 0)),
-                              ),
-                            ));
-
-                            Navigator.pop(context);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                backgroundColor:
-                                    Color.fromARGB(255, 123, 11, 24),
-                                content: Text("One or more fields are invalid",
-                                    textAlign: TextAlign.center),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: Color.fromARGB(255, 123, 11, 24),
-                              content: Text(
-                                  "An error has occurred. Please try again",
-                                  textAlign: TextAlign.center),
-                            ),
-                          );
-                        } finally {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      },
+                      onPressed: handleSubmit,
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

@@ -85,97 +85,111 @@ class _StudentDashboardState extends State<StudentDashboard> {
       legendStyle: const SegmentedBarLegendStyle(spacing: 80),
     );
     return Scaffold(
-        body: Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 100, 20, 10),
-          child: Column(
-            // Add spacing between column elements
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              // Students name
-              FittedBox(
-                  // This ensures that the student's name is resized to fit the screen
-                  fit: BoxFit.cover,
-                  child:
-                      Text(name, style: loginPageText.copyWith(fontSize: 200))),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 100, 20, 10),
+            child: Column(
+              // Add spacing between column elements
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                // Students name
+                FittedBox(
+                    // This ensures that the student's name is resized to fit the screen
+                    fit: BoxFit.cover,
+                    child: Text(name,
+                        style: loginPageText.copyWith(fontSize: 200))),
 
-              // Reddam Crest
-              SizedBox(
-                height: 200,
-                width: 200,
-                child: Image.asset("assets/images/ReddamHouseCrest.svg.png"),
-              ),
-
-              Text("You are currently working towards", style: loginPageText),
-
-              // Current objective
-              Text(
-                "Full Colours",
-                style: loginPageText,
-              ),
-
-              // Progress bar
-              Container(
-                child: progressBar,
-              ),
-
-              // Active hour percentage
-              Container(
-                width: 150,
-                height: 150,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    width: 2,
-                    color: secondaryColour,
-                  ),
+                // Reddam Crest
+                SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: Image.asset("assets/images/ReddamHouseCrest.svg.png"),
                 ),
-                child: Text("80% \n Active",
-                    style: loginPageText, textAlign: TextAlign.center),
-              ),
 
-              // Log hours button
-              OutlinedButton(
-                onPressed: () {
-                  NotificationServices().sendNotification(
-                      FirebaseAuth.instance.currentUser!.uid,
-                      "Test message",
-                      "HI");
-                  Navigator.pushNamed(context, '/logHoursPage');
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(
-                    color: primaryColour,
-                    width: 1.5,
-                  ),
+                Text("You are currently working towards", style: loginPageText),
+
+                // Current objective
+                Text(
+                  "Full Colours",
+                  style: loginPageText,
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Center(
-                            child: Text(
-                              'Log Hours',
-                              style: loginPageText.copyWith(
-                                fontSize: 20,
+
+                // Progress bar
+                Container(
+                  child: progressBar,
+                ),
+
+                // Active hour percentage
+                Container(
+                  width: 150,
+                  height: 150,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      width: 2,
+                      color: secondaryColour,
+                    ),
+                  ),
+                  child: Text("80% \n Active",
+                      style: loginPageText, textAlign: TextAlign.center),
+                ),
+
+                // Log hours button
+                OutlinedButton(
+                  onPressed: () {
+                    NotificationServices().sendNotification(
+                        FirebaseAuth.instance.currentUser!.uid,
+                        "Test message",
+                        "HI");
+                    Navigator.pushNamed(context, '/logHoursPage');
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: primaryColour,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: Text(
+                                'Log Hours',
+                                style: loginPageText.copyWith(
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
-                    ))
-                  ],
+                          )
+                        ],
+                      ))
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ));
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.all(6),
+        margin: EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+            color: primaryColour.withOpacity(0.5),
+            borderRadius: BorderRadius.all(Radius.circular(24))),
+        child: Row(children: [
+          SizedBox(
+            height: 36,
+            width: 36,
+          )
+        ]),
+      ),
+    );
   }
 }
