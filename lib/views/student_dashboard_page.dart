@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
+import 'upload_page.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -16,12 +17,13 @@ class StudentDashboardPage extends StatelessWidget {
     String userID = arguments.userID;
     String name = arguments.name;
     String goal = 'Full Colours';
+    int goalHours = 150;
     int activeHours = 50;
     int passiveHours = 30;
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
-      body: StudentDashboard(userID, name, goal, activeHours, passiveHours),
+      body: StudentDashboard(userID, name, goal, activeHours, passiveHours, goalHours),
     );
   }
 }
@@ -32,20 +34,22 @@ class StudentDashboard extends StatefulWidget {
   String userID = '';
   String name = '';
   String goal = '';
+  int goalHours = 0;
   int activeHours = 0;
   int passiveHours = 0;
 
   //Constructor
-  StudentDashboard(String passedUserID, String passedName, String passedGoal, int passedActiveHours, int passedPassiveHours, {super.key}) {
+  StudentDashboard(String passedUserID, String passedName, String passedGoal, int passedGoalHours, int passedActiveHours, int passedPassiveHours, {super.key}) {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
+    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
   }
 
   @override
-  State<StudentDashboard> createState() => _StudentDashboardState(userID, name, goal, activeHours, passiveHours);
+  State<StudentDashboard> createState() => _StudentDashboardState(userID, name, goal, goalHours, activeHours, passiveHours);
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
@@ -54,6 +58,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
   String userID = '';
   String name = '';
   String goal = '';
+  int goalHours = 0;
   int activeHours = 0;
   int passiveHours = 0;
   List<Segment> segments = [];
@@ -68,10 +73,11 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }
 
   //Constructor
-  _StudentDashboardState(String passedUserID, String passedName, String passedGoal, int passedActiveHours, int passedPassiveHours) {
+  _StudentDashboardState(String passedUserID, String passedName, String passedGoal, int passedGoalHours, int passedActiveHours, int passedPassiveHours) {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
+    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
     
@@ -101,7 +107,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
     PrimerProgressBar progressBar = PrimerProgressBar(
       segments: segments,
       // Set the maximum number of hours for the bar
-      maxTotalValue: 150,
+      maxTotalValue: goalHours,
       // Spacing between legend items
       legendStyle: const SegmentedBarLegendStyle(spacing: 80),
     );
@@ -166,103 +172,102 @@ class _StudentDashboardState extends State<StudentDashboard> {
     
     );
 
-    List<Widget> screens = [ //moving between screens, implemented at the bottom of the page
+    List<Widget> screens = [ //moving between screens
     
     //home screen
-    Column(
-        children: [
-           Padding(
+        Container(
+        color: Color(0xfffffff2),
+        child: Column(
+          children: [
+            Padding(
               padding: const EdgeInsets.fromLTRB(20, 75, 20, 10),
               child: Column(
                 // Add spacing between column elements
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget> [
-
+                children: <Widget>[
                   // Students name
                   Row(
                     children: [
                       FittedBox(
-                        // This ensures that the student's name is resized to fit the screen
-                        fit: BoxFit.cover, 
-                        child: Text("Hi, $name!", style: loginPageText.copyWith(
-                          fontSize: 35, 
-                          fontWeight: FontWeight.bold
-                          )
-                        )
-                      ),
+                          // This ensures that the student's name is resized to fit the screen
+                          fit: BoxFit.cover,
+                          child: Text("Hi, $name!",
+                              style: loginPageText.copyWith(
+                                  fontSize: 35, fontWeight: FontWeight.bold))),
                     ],
                   ),
 
                   // Reddam Crest
                   SizedBox(
-                    height: 75,
-                    //width: 200,
-                    //child: Image.asset("assets/images/ReddamHouseCrest.svg.png"), 200x200
+                    height: 350,
+                    width: 200,
+                    child:
+                        Image.asset("assets/images/ReddamHouseCrest.svg.png"),
                   ),
 
+                  //goal
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text("You are currently working towards:",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 20,
+                          )),
+
+                      // Current objective
+                      Text(
+                        goal,
+                        style: TextStyle(
+                          color: primaryColour,
+                          fontSize: 23,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 15),
+
+                  //progress
                   Container(
                     decoration: BoxDecoration(
-                      color: secondaryColour.withOpacity(0.1),
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                    ),
+                        color: secondaryColour.withOpacity(0.1),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 25),
-                      child: Column(
-                        children: <Widget> [
-                      
-                          // Active hour percentage
-                          Container(
-                            width: 150,
-                            height: 150,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                width: 2,
-                                color: secondaryColour,
-                              ),
+                      child: Column(children: <Widget>[
+                        // Active hour percentage
+                        Container(
+                          width: 150,
+                          height: 150,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 2,
+                              color: secondaryColour,
                             ),
-                            child: Text("${(activeHours/1.5).round()}% \n Active", style: loginPageText, textAlign: TextAlign.center),
                           ),
-                  
-                          SizedBox(height: 15),
+                          child: Text(
+                              "${(activeHours / 1.5).round()}% \n Active",
+                              style: loginPageText,
+                              textAlign: TextAlign.center),
+                        ),
 
-                          // Progress bar
-                          Container(
-                            child: progressBar,
-                          ),
-                        ]
-                      ),
+                        SizedBox(height: 15),
+
+                        // Progress bar
+                        Container(
+                          child: progressBar,
+                        ),
+                      ]),
                     ),
                   ),
-
-                SizedBox(height: 15),
-
-
-                  Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("You are currently working towards:",
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 20,
-                        )),
-
-                    // Current objective
-                    Text(
-                      goal,
-                      style: TextStyle(
-                        color: primaryColour,
-                        fontSize: 23,
-                      ),
-                    ),
-                  ],
-                ),
-
                 ],
               ),
             ),
-        ],
+          ],
+        ),
       ),
 
       //hours
@@ -276,9 +281,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
 
       //gallery
-      Center(
-        child: Text("gallery!!"),
-      ),
+      ImageUploads(),
 
       //events
       Center(
@@ -289,6 +292,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     return Scaffold(
       body: screens[currentIndex],
+      extendBody: true,
 
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
