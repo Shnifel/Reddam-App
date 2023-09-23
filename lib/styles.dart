@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 //some text styles
 const TextStyle welcomePageText = TextStyle(
+  
   fontSize: 20,
   color: Colors.white,
   decoration: TextDecoration.none,
-  fontFamily: 'AbeeZee',
   fontWeight: FontWeight.normal,
 );
 
@@ -13,7 +13,6 @@ TextStyle loginPageText = TextStyle(
   fontSize: 18,
   color: primaryColour,
   decoration: TextDecoration.none,
-  fontFamily: 'AbeeZee',
   fontWeight: FontWeight.normal,
 );
 
