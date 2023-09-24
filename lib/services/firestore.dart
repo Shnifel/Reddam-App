@@ -16,18 +16,22 @@ class FirestoreService {
   final CollectionReference hoursCollection =
       FirebaseFirestore.instance.collection("Logs");
 
-  // Update the user's details
+  /// Provide a map of data and create a new user with the given uid and data
+  ///
+  /// [data] All user related data
   Future setUserData(Map<String, Object?> data) async {
     return await collection.doc(uid).set(data);
   }
 
-  // Extract data based on a document id
+  /// Obtain a user's data based on a provided id
+  ///
+  /// [id] - User's firebase id
   Future<Map<String, dynamic>> getData(String? id) async {
     final snapshot = await collection.doc(id).get();
     return snapshot.data() as Map<String, dynamic>;
   }
 
-  // Get the user name
+  // Get user's name
   Future<String?> getUserData() async {
     try {
       final snapshot = await collection.doc(uid).get();
@@ -39,7 +43,16 @@ class FirestoreService {
     }
   }
 
-  // Log user's hours claim
+  /// Log hours for a user. Creates a new document in the 'Logs' collection
+  ///
+  /// [uid] - User id of person whose receiving hours
+  /// [hoursType] - Active or passive hours
+  /// [activity] - If active will be Collection or Time, if passive will be specific activity
+  /// [amount] - Hours/ Amount of community service
+  /// [receiptNo] - Receipt number that should match that of uploaded image
+  /// [evidenceUrls] - A list of url's to photos for evidence
+  /// [activeType] - If active the specific activity
+  /// [optionalUrls] - A list of url's to other photos for gallery
   Future<void> logHours(String uid, String? hoursType, String? activity,
       double amount, String? receiptNo, List<String> evidenceUrls,
       {String? activeType, List<String> optionalUrls = const []}) async {
@@ -56,6 +69,7 @@ class FirestoreService {
       'optionalUrls':
           optionalUrls, // List of urls for any other additional photos
       'validated': false, // Set validated state to be false
+      'date': DateTime.now().toString()
     };
 
     try {
@@ -82,5 +96,24 @@ class FirestoreService {
         .child('file/'); // Create reference to firebase storage
     await ref.putFile(photo); // Upload file
     return await ref.getDownloadURL(); // Obtain download url
+  }
+
+  Future<Map<String, Object?>> aggregateHours(
+      {Map<String, Object?> filters = const {}}) async {
+    Query<Object?> query = hoursCollection;
+    query.where('uid', isEqualTo: uid);
+
+    filters.forEach((key, value) => query.where(key, isEqualTo: value));
+
+    QuerySnapshot querySnapshot = await query.get();
+
+    Map<String, double> hours = {'Active': 0, 'Passive': 0};
+
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      hours[data['hours_type']] = hours[data['hours_type']]! + data['amount'];
+    });
+
+    return hours;
   }
 }
