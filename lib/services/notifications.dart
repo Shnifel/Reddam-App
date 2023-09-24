@@ -56,7 +56,15 @@ class NotificationServices {
   initInfo() {
     var androidInit =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initSettings = InitializationSettings(android: androidInit);
+    
+    var initializationSettingsIOS = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {});
+
+    var initSettings = InitializationSettings(android: androidInit, iOS: initializationSettingsIOS);
+    
     flutterLocalNotificationsPlugin.initialize(initSettings);
 
     FirebaseMessaging.onMessage.listen((event) async {
