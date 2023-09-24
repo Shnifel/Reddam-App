@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
 import 'upload_page.dart';
+import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -62,6 +64,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
   int activeHours = 0;
   int passiveHours = 0;
   List<Segment> segments = [];
+  DateTime today=DateTime.now();
+ // String currentday=today.toString().split(" ")[0];
 
   //variables for bottom nav bar
   int currentIndex = 0; //keeps track of current selected item
@@ -69,6 +73,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
   void onTapItem(int index) {
     setState(() {
       currentIndex = index;
+    });
+  }
+
+  void _onDaySelected(DateTime day, DateTime FocusedDay){
+    setState(() {
+      today=day;
     });
   }
 
@@ -173,7 +183,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
 
     List<Widget> screens = [ //moving between screens
-    
+
     //home screen
         Container(
         color: Color(0xfffffff2),
@@ -284,10 +294,35 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ImageUploads(),
 
       //events
-      Center(
-        child: Text("events!!"),
-      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 40.0),
+        child: Center(
+
+
+    child: Column(
+    children: <Widget>[
+
+
+
+    TableCalendar(rowHeight: 75,
+          headerStyle: HeaderStyle(formatButtonVisible: false,titleCentered: true),
+          availableGestures: AvailableGestures.all,
+          selectedDayPredicate: (day)=> isSameDay(day,today),
+          focusedDay:today,
+          firstDay: DateTime.utc(2023,09,20),
+          lastDay: DateTime.utc(2030,12,31),
+         onDaySelected: _onDaySelected,
+
+    ),
+
+
+    ],
+
+    ),
+    ),
+      )
     ];
+
 
 
     return Scaffold(
