@@ -9,9 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
-import 'upload_page.dart';
-import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -29,7 +26,7 @@ class StudentDashboardPage extends StatelessWidget {
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
-      body: StudentDashboard(userID, name, goal, activeHours, passiveHours, goalHours),
+      body: StudentDashboard(userID, name, goal, activeHours, passiveHours),
     );
   }
 }
@@ -49,7 +46,6 @@ class StudentDashboard extends StatefulWidget {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
-    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
   }
@@ -78,19 +74,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
     });
   }
 
-  void _onDaySelected(DateTime day, DateTime FocusedDay){
-    setState(() {
-      today=day;
-    });
-  }
-
   //Constructor
   _StudentDashboardState(String passedUserID, String passedName,
       String passedGoal, double passedActiveHours, double passedPassiveHours) {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
-    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
 
@@ -201,22 +190,21 @@ class _StudentDashboardState extends State<StudentDashboard> {
               activeIcon: Icon(Icons.photo_library),
               label: "Gallery"),
 
-        //icon 4: events
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today_outlined), 
-          activeIcon: Icon(Icons.calendar_month), 
-          label: "Events"
-        ),
-      ]
-    
-    );
+          //icon 4: events
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today_outlined),
+              activeIcon: Icon(Icons.calendar_month),
+              label: "Events"),
+        ]);
 
-    List<Widget> screens = [ //moving between screens, implemented at the bottom of the page
-    
-    //home screen
-    Column(
-        children: [
-           Padding(
+    List<Widget> screens = [
+      //moving between screens, implemented at the bottom of the page
+
+      //home screen
+      SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
               padding: const EdgeInsets.fromLTRB(20, 75, 20, 10),
               child: Column(
                 // Add spacing between column elements
@@ -237,69 +225,69 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   // Reddam Crest
                   SizedBox(
                     height: 75,
-                    //width: 200,
-                    //child: Image.asset("assets/images/ReddamHouseCrest.svg.png"), 200x200
+                    width: 200,
+                    child:
+                        Image.asset("assets/images/ReddamHouseCrest.svg.png"),
                   ),
 
                   Container(
                     decoration: BoxDecoration(
-                      color: secondaryColour.withOpacity(0.1),
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                    ),
+                        color: secondaryColour.withOpacity(0.1),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 25),
-                      child: Column(
-                        children: <Widget> [
-                      
-                          // Active hour percentage
-                          Container(
-                            width: 150,
-                            height: 150,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                width: 2,
-                                color: secondaryColour,
-                              ),
+                      child: Column(children: <Widget>[
+                        // Active hour percentage
+                        Container(
+                          width: 150,
+                          height: 150,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 2,
+                              color: secondaryColour,
                             ),
-                            child: Text("${(activeHours/1.5).round()}% \n Active", style: loginPageText, textAlign: TextAlign.center),
                           ),
-                  
-                          SizedBox(height: 15),
+                          child: Text("${(percentActive).round()}% \n Active",
+                              style: loginPageText,
+                              textAlign: TextAlign.center),
+                        ),
 
-                          // Progress bar
-                          Container(
-                            child: progressBar,
-                          ),
-                        ]
-                      ),
+                        SizedBox(height: 15),
+
+                        // Progress bar
+                        Container(
+                          child: progressBar,
+                        ),
+                      ]),
                     ),
                   ),
 
-                SizedBox(height: 15),
+                  SizedBox(height: 15),
 
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("You are currently working towards:",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                            )),
 
-                  Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("You are currently working towards:",
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 20,
-                        )),
-
-                    // Current objective
-                    Text(
-                      goal,
-                      style: TextStyle(
-                        color: primaryColour,
-                        fontSize: 23,
-                      ),
+                        // Current objective
+                        Text(
+                          goal,
+                          style: TextStyle(
+                            color: primaryColour,
+                            fontSize: 23,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-
+                  ),
                 ],
               ),
             ),
@@ -318,7 +306,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
 
       //gallery
-      ImageUploads(),
+      Center(
+        child: Text("gallery!!"),
+      ),
 
       //events
       Center(
@@ -326,10 +316,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
     ];
 
-
     return Scaffold(
       body: screens[currentIndex],
-
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           // sets the background color of the `BottomNavigationBar`
