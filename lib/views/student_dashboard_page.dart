@@ -201,36 +201,31 @@ class _StudentDashboardState extends State<StudentDashboard> {
               activeIcon: Icon(Icons.photo_library),
               label: "Gallery"),
 
-          //icon 4: events
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              activeIcon: Icon(Icons.calendar_month),
-              label: "Events"),
-        ]);
+        //icon 4: events
+        BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today_outlined), 
+          activeIcon: Icon(Icons.calendar_month), 
+          label: "Events"
+        ),
+      ]
+    
+    );
 
-    List<Widget> screens = [
-      //moving between screens, implemented at the bottom of the page
-
-      //home screen
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
+    List<Widget> screens = [ //moving between screens, implemented at the bottom of the page
+    
+    //home screen
+    Column(
+        children: [
+           Padding(
               padding: const EdgeInsets.fromLTRB(20, 75, 20, 10),
               child: Column(
                 // Add spacing between column elements
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                children: <Widget>[
                   // Students name
                   Row(
                     children: [
                       FittedBox(
-                          // This ensures that the student's name is resized to fit the screen
-                          fit: BoxFit.cover,
-                          child: Text("Hi, $name!",
-                              style: loginPageText.copyWith(
-                                  fontSize: 35, fontWeight: FontWeight.bold))),
                           // This ensures that the student's name is resized to fit the screen
                           fit: BoxFit.cover,
                           child: Text("Hi, $name!",
@@ -242,75 +237,72 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   // Reddam Crest
                   SizedBox(
                     height: 75,
-                    width: 200,
-                    child:
-                        Image.asset("assets/images/ReddamHouseCrest.svg.png"),
+                    //width: 200,
+                    //child: Image.asset("assets/images/ReddamHouseCrest.svg.png"), 200x200
                   ),
 
                   Container(
                     decoration: BoxDecoration(
-                        color: secondaryColour.withOpacity(0.1),
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                      color: secondaryColour.withOpacity(0.1),
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 25),
-                      child: Column(children: <Widget>[
-                        // Active hour percentage
-                        Container(
-                          width: 150,
-                          height: 150,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 2,
-                              color: secondaryColour,
+                      child: Column(
+                        children: <Widget> [
+                      
+                          // Active hour percentage
+                          Container(
+                            width: 150,
+                            height: 150,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 2,
+                                color: secondaryColour,
+                              ),
                             ),
+                            child: Text("${(activeHours/1.5).round()}% \n Active", style: loginPageText, textAlign: TextAlign.center),
                           ),
-                          child: Text("${(percentActive).round()}% \n Active",
-                              style: loginPageText,
-                              textAlign: TextAlign.center),
-                        ),
+                  
+                          SizedBox(height: 15),
 
-                        SizedBox(height: 15),
-
-                        // Progress bar
-                        Container(
-                          child: progressBar,
-                        ),
-                      ]),
+                          // Progress bar
+                          Container(
+                            child: progressBar,
+                          ),
+                        ]
+                      ),
                     ),
                   ),
 
-                  SizedBox(height: 15),
+                SizedBox(height: 15),
 
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("You are currently working towards:",
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 20,
-                            )),
 
-                        // Current objective
-                        Text(
-                          goal,
-                          style: TextStyle(
-                            color: primaryColour,
-                            fontSize: 23,
-                          ),
-                        ),
-                      ],
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("You are currently working towards:",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 20,
+                        )),
+
+                    // Current objective
+                    Text(
+                      goal,
+                      style: TextStyle(
+                        color: primaryColour,
+                        fontSize: 23,
+                      ),
                     ),
-                  ),
+                  ],
+                ),
+
                 ],
               ),
             ),
-          ],
-        ),
-      ),
           ],
         ),
       ),
@@ -334,8 +326,10 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
     ];
 
+
     return Scaffold(
       body: screens[currentIndex],
+
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           // sets the background color of the `BottomNavigationBar`
