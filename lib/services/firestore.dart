@@ -61,7 +61,7 @@ class FirestoreService {
       'uid': uid, // User id
       'hours_type': hoursType, // Active or Passive
       'activity': activity, // Specific Active or Passive Activity
-      'active_type': activeType, // Activity
+      'active_type': activeType, // Activity for active
       'amount': amount, // Number of Hours
       'receipt_no': receiptNo, // Receipt No
       'evidenceUrls':
@@ -103,7 +103,7 @@ class FirestoreService {
     Query<Object?> query = hoursCollection;
     query.where('uid', isEqualTo: uid);
 
-    filters.forEach((key, value) => query.where(key, isEqualTo: value));
+    filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
 
     QuerySnapshot querySnapshot = await query.get();
 

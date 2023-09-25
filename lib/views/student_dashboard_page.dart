@@ -178,7 +178,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
           //icon 2: notifications
           BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none_sharp),
+              icon: Badge(
+                  label: Text('20'),
+                  child: Icon(Icons.notifications_none_sharp)),
               activeIcon: Icon(Icons.notifications_sharp),
               label: "Notifications"),
 

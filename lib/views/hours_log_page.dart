@@ -3,6 +3,7 @@ import 'package:cce_project/data/data.dart';
 import 'package:cce_project/helpers/dropdown_helpers.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/views/image_upload.dart';
+import 'package:cce_project/widgets/success.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../styles.dart';
@@ -48,6 +49,7 @@ class _LogHoursFormState extends State<LogHoursForm> {
   String? _typeSelected; // Active or Passive
   String? _typeActive; // Specific active
   String? _activeChoice;
+  String? _passiveNote;
   bool _isLoading = false;
 
   // New image added
@@ -103,7 +105,7 @@ class _LogHoursFormState extends State<LogHoursForm> {
 
     try {
       // Validate returns true if the form is valid, or false otherwise.
-      if (_formKey.currentState!.validate() && evidence.length >= 1) {
+      if (_formKey.currentState!.validate() && evidence.isNotEmpty) {
         // User id
         String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -131,18 +133,36 @@ class _LogHoursFormState extends State<LogHoursForm> {
 
         double amount = double.parse(_hoursController.text);
         double excess = 0;
+
         if (Data.LOG_BOUNDS[_activeChoice] != null) {
-          int bounds = Data.LOG_BOUNDS[_activeChoice]!;
-          if (amount > bounds) {
-            excess = amount - bounds;
-            amount = bounds.toDouble();
+          double bounds = Data.LOG_BOUNDS[_activeChoice]!.toDouble();
+          Map<String, double> totalAggregate = await firestore.aggregateHours(
+              filters: {'active_type': _activeChoice}) as Map<String, double>;
+          double total = totalAggregate[_typeSelected!]!;
+
+          if (total >= bounds) {
+            excess = amount;
+            amount = 0;
+          } else if (amount > bounds || total + amount > bounds) {
+            double original = amount;
+            amount = bounds - total;
+            excess = original - amount;
+          }
+
+          if (excess != 0) {
+            setState(() {
+              _passiveNote =
+                  "Your total hours for this activity exceed the maximum ($bounds) and ($excess) of the hours will be recorded as Passive";
+            });
           }
         }
 
-        // Record hours and send notification of new hours logged
-        await firestore.logHours(uid, _typeSelected, _typeActive, amount,
-            _receiptController.text, evidenceUrls,
-            activeType: _activeChoice, optionalUrls: optionalUrls);
+        if (amount != 0) {
+          // Record hours and send notification of new hours logged
+          await firestore.logHours(uid, _typeSelected, _typeActive, amount,
+              _receiptController.text, evidenceUrls,
+              activeType: _activeChoice, optionalUrls: optionalUrls);
+        }
 
         if (excess != 0) {
           // Remove excess amount and allocate as passive hours
@@ -178,7 +198,14 @@ class _LogHoursFormState extends State<LogHoursForm> {
   @override
   Widget build(BuildContext context) {
     return widget.isSuccess
-        ? const Center(child: Text("Helloo"))
+        ? Success(
+            hours_type: _typeSelected! +
+                (_activeChoice != null ? " " + _typeActive! : ""),
+            activty: _typeSelected == 'Passive' ? _typeActive! : _activeChoice!,
+            amount: double.parse(_hoursController.text),
+            receipt_no: _receiptController.text,
+            note: _passiveNote,
+          )
         : Padding(
             padding: const EdgeInsets.only(right: 20, left: 20, top: 25),
             child: Form(
@@ -378,9 +405,8 @@ class _LogHoursFormState extends State<LogHoursForm> {
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
-                                labelText: _typeActive == 'Collection'
-                                    ? 'Enter the amount collected'
-                                    : 'Enter the number of hours completed',
+                                labelText:
+                                    'Enter the number of hours completed',
                                 labelStyle: loginPageText),
                           ),
                         )),
