@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -311,9 +312,22 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
 
       //events
-      Center(
-        child: Text("events!!"),
-      ),
+      Padding(
+          padding: const EdgeInsets.only(top: 40.0),
+          child: Center(
+              child: Column(children: <Widget>[
+            TableCalendar(
+              rowHeight: 75,
+              headerStyle:
+                  HeaderStyle(formatButtonVisible: false, titleCentered: true),
+              availableGestures: AvailableGestures.all,
+              selectedDayPredicate: (day) => isSameDay(day, today),
+              focusedDay: today,
+              firstDay: DateTime.utc(2023, 09, 20),
+              lastDay: DateTime.utc(2030, 12, 31),
+              onDaySelected: _onDaySelected,
+            ),
+          ])))
     ];
 
     return Scaffold(
