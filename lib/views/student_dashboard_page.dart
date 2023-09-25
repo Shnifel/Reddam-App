@@ -65,6 +65,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
   double passiveHours = 0;
   List<Segment> segments = [];
   double percentActive = 0;
+  DateTime today = DateTime.now();
 
   //variables for bottom nav bar
   int currentIndex = 0; //keeps track of current selected item
