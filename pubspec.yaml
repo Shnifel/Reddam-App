@@ -43,6 +43,7 @@ dependencies:
   flutter_local_notifications: ^15.1.1
   firebase_messaging: ^14.6.7
   http: ^1.1.0
+  table_calendar: ^3.0.9
 
 dev_dependencies:
   flutter_test:

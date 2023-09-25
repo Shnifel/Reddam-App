@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Shnifel/Reddam-App.svg?token=7jrfMQ7E2uYuS56iwsnp&branch=Jamie_Student_Dashboard)](https://app.travis-ci.com/Shnifel/Reddam-App)
+
 # cce_project
 
 A new Flutter project.

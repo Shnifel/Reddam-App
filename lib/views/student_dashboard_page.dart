@@ -9,6 +9,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
+import 'upload_page.dart';
+import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -26,7 +29,7 @@ class StudentDashboardPage extends StatelessWidget {
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
-      body: StudentDashboard(userID, name, goal, activeHours, passiveHours),
+      body: StudentDashboard(userID, name, goal, activeHours, passiveHours, goalHours),
     );
   }
 }
@@ -46,6 +49,7 @@ class StudentDashboard extends StatefulWidget {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
+    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
   }
@@ -74,12 +78,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
     });
   }
 
+  void _onDaySelected(DateTime day, DateTime FocusedDay){
+    setState(() {
+      today=day;
+    });
+  }
+
   //Constructor
   _StudentDashboardState(String passedUserID, String passedName,
       String passedGoal, double passedActiveHours, double passedPassiveHours) {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
+    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
 
@@ -210,10 +221,16 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 // Add spacing between column elements
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
+                children: <Widget>[
                   // Students name
                   Row(
                     children: [
                       FittedBox(
+                          // This ensures that the student's name is resized to fit the screen
+                          fit: BoxFit.cover,
+                          child: Text("Hi, $name!",
+                              style: loginPageText.copyWith(
+                                  fontSize: 35, fontWeight: FontWeight.bold))),
                           // This ensures that the student's name is resized to fit the screen
                           fit: BoxFit.cover,
                           child: Text("Hi, $name!",
@@ -294,6 +311,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
           ],
         ),
       ),
+          ],
+        ),
+      ),
 
       //hours
       Center(
@@ -306,9 +326,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
 
       //gallery
-      Center(
-        child: Text("gallery!!"),
-      ),
+      ImageUploads(),
 
       //events
       Center(
