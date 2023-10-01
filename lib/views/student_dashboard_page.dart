@@ -1,14 +1,19 @@
 import 'package:cce_project/arguments/user_info_arguments.dart';
+import 'package:cce_project/services/badge_notifier.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/services/notifications.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/hours_history_page.dart';
 import 'package:cce_project/views/hours_log_page.dart';
 import 'package:cce_project/views/hours_page.dart';
+import 'package:cce_project/views/notifications_page.dart';
+import 'package:cce_project/widgets/notification.dart' as Notification;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class StudentDashboardPage extends StatelessWidget {
@@ -22,8 +27,8 @@ class StudentDashboardPage extends StatelessWidget {
     String userID = arguments.userID;
     String name = arguments.name;
     String goal = 'Full Colours';
-    double activeHours = 50;
-    double passiveHours = 30;
+    double activeHours = 0;
+    double passiveHours = 0;
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
@@ -38,7 +43,7 @@ class StudentDashboard extends StatefulWidget {
   String name = '';
   String goal = '';
   double activeHours = 0;
-  double passiveHours = 0;
+  double passiveHours = 1;
 
   //Constructor
   StudentDashboard(String passedUserID, String passedName, String passedGoal,
@@ -67,11 +72,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
   double percentActive = 0;
   DateTime today = DateTime.now();
 
+  void _onDaySelected(DateTime day, DateTime FocusedDay) {
+    setState(() {
+      today = day;
+    });
+  }
+
   //variables for bottom nav bar
   int currentIndex = 0; //keeps track of current selected item
+  String? focusDoc;
 
   void onTapItem(int index) {
     setState(() {
+      focusDoc = null;
       currentIndex = index;
     });
   }
@@ -101,7 +114,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
   @override
   void initState() {
     super.initState();
-    NotificationServices notif = NotificationServices();
+    aggregateHours();
+    NotificationServices notif = NotificationServices(context);
     notif.requestPermission();
     notif.getToken();
     notif.initInfo();
@@ -120,14 +134,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
     setState(() {
       passiveHours = hours['Passive']!;
       activeHours = hours['Active']!;
-      percentActive =
-          (100.0 * hours['Active']!) / (hours['Active']! + hours['Passive']!);
+      if (passiveHours == 0 && activeHours == 0) {
+        percentActive = 0;
+      } else {
+        percentActive =
+            (100.0 * hours['Active']!) / (hours['Active']! + hours['Passive']!);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    aggregateHours();
+    int badgeCount = context.watch<BadgeNotifier>().count;
+
     // Hours progress bar
     PrimerProgressBar progressBar = PrimerProgressBar(
       segments: segments = [
@@ -173,30 +192,38 @@ class _StudentDashboardState extends State<StudentDashboard> {
               label: "Home"),
 
           //icon 1: log hours
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.access_time_sharp),
               activeIcon: Icon(Icons.access_time_filled),
               label: "Hours"),
 
           //icon 2: notifications
           BottomNavigationBarItem(
-              icon: Badge(
-                  label: Text('20'),
-                  child: Icon(Icons.notifications_none_sharp)),
-              activeIcon: Icon(Icons.notifications_sharp),
+              icon: badgeCount != 0
+                  ? Badge(
+                      label: Text('$badgeCount'),
+                      child: const Icon(Icons.notifications_none_sharp))
+                  : const Icon(Icons.notifications_none_sharp),
+              activeIcon: const Icon(Icons.notifications_sharp),
               label: "Notifications"),
 
           //icon 3: gallery
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.photo_library_outlined),
               activeIcon: Icon(Icons.photo_library),
               label: "Gallery"),
 
           //icon 4: events
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today_outlined),
               activeIcon: Icon(Icons.calendar_month),
               label: "Events"),
+
+          //icon 5 : logs history
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.history_outlined),
+              activeIcon: Icon(Icons.history),
+              label: "My hours"),
         ]);
 
     List<Widget> screens = [
@@ -235,9 +262,10 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   Container(
                     decoration: BoxDecoration(
                         color: secondaryColour.withOpacity(0.1),
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 25),
+                      padding: const EdgeInsets.symmetric(vertical: 25),
                       child: Column(children: <Widget>[
                         // Active hour percentage
                         Container(
@@ -256,7 +284,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               textAlign: TextAlign.center),
                         ),
 
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
 
                         // Progress bar
                         Container(
@@ -266,14 +294,14 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     ),
                   ),
 
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
 
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("You are currently working towards:",
+                        const Text("You are currently working towards:",
                             style: TextStyle(
                               color: Colors.black87,
                               fontSize: 20,
@@ -298,17 +326,25 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
 
       //hours
-      Center(
+      const Center(
         child: HoursLog(),
       ),
 
       //notifications
       Center(
-        child: Text("notifications!!"),
-      ),
+          child: NotificationsPage(
+        navigateToHoursHistory: (String? focus) => {
+          setState(
+            () {
+              currentIndex = 5;
+              focusDoc = focus;
+            },
+          )
+        },
+      )),
 
       //gallery
-      Center(
+      const Center(
         child: Text("gallery!!"),
       ),
 
@@ -319,8 +355,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
               child: Column(children: <Widget>[
             TableCalendar(
               rowHeight: 75,
-              headerStyle:
-                  HeaderStyle(formatButtonVisible: false, titleCentered: true),
+              headerStyle: const HeaderStyle(
+                  formatButtonVisible: false, titleCentered: true),
               availableGestures: AvailableGestures.all,
               selectedDayPredicate: (day) => isSameDay(day, today),
               focusedDay: today,
@@ -328,7 +364,10 @@ class _StudentDashboardState extends State<StudentDashboard> {
               lastDay: DateTime.utc(2030, 12, 31),
               onDaySelected: _onDaySelected,
             ),
-          ])))
+          ]))),
+
+      // Hours history page
+      Center(child: HoursHistoryPage(focus: focusDoc)),
     ];
 
     return Scaffold(

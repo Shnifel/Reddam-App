@@ -5,7 +5,7 @@ class Success extends StatelessWidget {
   final String hours_type;
   final String activty;
   final double amount;
-  final String receipt_no;
+  final String? receipt_no;
   final String? note;
 
   final TextStyle labelStyle = TextStyle(color: secondaryColour);
@@ -24,13 +24,14 @@ class Success extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-            child: Padding(
+        body: SingleChildScrollView(
+            child: Center(
+                child: Padding(
       padding: const EdgeInsets.fromLTRB(20, 75, 20, 10),
       child: Container(
           alignment: Alignment.topCenter,
           width: 500,
-          height: 500,
+          height: 600,
           decoration: BoxDecoration(
               color: secondaryColour.withOpacity(0.1),
               borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -66,7 +67,11 @@ class Success extends StatelessWidget {
                 rows: [
                   DataRow(cells: [
                     DataCell(Text('Receipt No.', style: labelStyle)),
-                    DataCell(Text(receipt_no, style: valueStyle)),
+                    DataCell(Text(
+                        receipt_no == "" || receipt_no == null
+                            ? "-"
+                            : receipt_no!,
+                        style: valueStyle)),
                   ]),
                   DataRow(cells: [
                     DataCell(Text('Type', style: labelStyle)),
@@ -89,12 +94,42 @@ class Success extends StatelessWidget {
                   ]),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
+              if (note != null && note != "")
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    decoration: const BoxDecoration(
+                        color: Color.fromARGB(50, 255, 200, 0),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.warning,
+                            color: Color.fromARGB(255, 255, 150, 0),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: Text(
+                              "Note:" + note!,
+                              overflow: TextOverflow.visible,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               const Text("Keep up the good work !")
             ],
           )),
-    )));
+    ))));
   }
 }

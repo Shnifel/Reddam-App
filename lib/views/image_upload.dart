@@ -7,7 +7,9 @@ import 'package:path/path.dart';
 class ImageUploads extends StatefulWidget {
   final Function(File?) onChange;
   final File? photo;
-  const ImageUploads({required this.onChange, Key? key, File? this.photo})
+  double size;
+  ImageUploads(
+      {required this.onChange, Key? key, File? this.photo, this.size = 150})
       : super(key: key);
 
   @override
@@ -101,8 +103,8 @@ class _ImageUploadsState extends State<ImageUploads> {
               decoration: BoxDecoration(
                 color: Colors.grey[200],
               ),
-              width: 150,
-              height: 150,
+              width: widget.size,
+              height: widget.size,
               child: Icon(
                 Icons.camera_alt,
                 color: Colors.grey[800],

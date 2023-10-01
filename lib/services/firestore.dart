@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cce_project/services/notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class FirestoreService {
@@ -69,18 +70,19 @@ class FirestoreService {
       'optionalUrls':
           optionalUrls, // List of urls for any other additional photos
       'validated': false, // Set validated state to be false
-      'date': DateTime.now().toString()
+      'date': Timestamp.fromDate(DateTime.now())
     };
 
     try {
       // Log the corresponding hours claim to firestore
-      await hoursCollection.add(args);
+      DocumentReference docRef = await hoursCollection.add(args);
 
       String? userName = await getUserData();
       String body = "$userName has completed $amount hours of $activity";
 
       // Send a notification to the admin of this upload
-      NotificationServices().sendNotification(uid, "New hours logged", body);
+      NotificationServices.sendNotification(uid, "New hours logged", body,
+          id: docRef.id, notificationType: "HOURS");
     } catch (e) {
       print(e);
     }
@@ -115,5 +117,34 @@ class FirestoreService {
     });
 
     return hours;
+  }
+
+  Future<List<Map<String, dynamic>>> getStudentLogs(
+      {Map<String, Object?> filters = const {}}) async {
+    Query query = hoursCollection;
+    query.where('uid', isEqualTo: uid);
+
+    filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
+
+    query = query.limit(10);
+
+    QuerySnapshot querySnapshot = await query.get();
+
+    List<Map<String, dynamic>> logs = [];
+
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      logs.add(data);
+    });
+
+    logs.sort((a, b) {
+      DateTime d1 = (a['date'] as Timestamp).toDate();
+      DateTime d2 = (b['date'] as Timestamp).toDate();
+
+      return d2.compareTo(d1);
+    });
+
+    return logs;
   }
 }

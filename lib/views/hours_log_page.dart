@@ -230,16 +230,12 @@ class _LogHoursFormState extends State<LogHoursForm> {
                             child: Text('Step 1 : Type of hours submitting',
                                 style: loginPageText.copyWith(
                                     fontSize: 14, color: primaryColour))),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                            child: LinearProgressIndicator(
-                                value: 1 / 5,
-                                backgroundColor: primaryColour,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  secondaryColour,
-                                ))),
+                        Container(
+                          child: Icon(
+                            Icons.menu,
+                            color: secondaryColour,
+                          ),
+                        )
                       ],
                     ),
 
@@ -333,7 +329,6 @@ class _LogHoursFormState extends State<LogHoursForm> {
                                   DropdownListHelper.hoursChoices[_typeActive],
                               onChanged: (value) => setState(() {
                                 _activeChoice = value;
-                                _formKey.currentState?.validate();
                               }),
                               validator: (value) {
                                 if (value == null) {
@@ -357,19 +352,18 @@ class _LogHoursFormState extends State<LogHoursForm> {
                       children: <Widget>[
                         Expanded(
                             flex: 0,
-                            child: Text('Step 2 : Enter the amount',
+                            child: Text('Step 2 : Enter the number of hours',
                                 style: loginPageText.copyWith(
                                     fontSize: 14, color: primaryColour))),
                         const SizedBox(
                           width: 50,
                         ),
-                        Expanded(
-                            child: LinearProgressIndicator(
-                                value: 2 / 5,
-                                backgroundColor: primaryColour,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  secondaryColour,
-                                ))),
+                        Container(
+                          child: Icon(
+                            Icons.access_time,
+                            color: secondaryColour,
+                          ),
+                        )
                       ],
                     ),
 
@@ -412,62 +406,63 @@ class _LogHoursFormState extends State<LogHoursForm> {
                         )),
 
                     // Enter the receipt number, a string - heading
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                            flex: 0,
-                            child: Text('Step 3 : Enter the receipt number',
-                                style: loginPageText.copyWith(
-                                    fontSize: 14, color: primaryColour))),
-                        const SizedBox(
-                          width: 60,
-                        ),
-                        Expanded(
-                            child: LinearProgressIndicator(
-                                value: 3 / 5,
-                                backgroundColor: primaryColour,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  secondaryColour,
-                                ))),
-                      ],
-                    ),
+                    if (_typeActive != "External" &&
+                        _activeChoice != "External")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                              flex: 0,
+                              child: Text('Step 3 : Enter the receipt number',
+                                  style: loginPageText.copyWith(
+                                      fontSize: 14, color: primaryColour))),
+                          Container(
+                            child: Icon(
+                              Icons.receipt,
+                              color: secondaryColour,
+                            ),
+                          )
+                        ],
+                      ),
 
                     // Receipt number input box
-                    Container(
-                        margin: const EdgeInsets.only(bottom: 10.5, top: 10.5),
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          color: secondaryColour.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        height: 60,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: TextFormField(
-                            controller: _receiptController,
-                            validator: (value) {
-                              if (value == "") {
-                                return "Please enter the receipt number matching the evidence";
-                              }
-                              return null;
-                            },
-                            onChanged: (value) => setState(() {
-                              _formKey.currentState?.validate();
-                            }),
-                            style: const TextStyle(
-                              color: Colors.black87,
-                              fontSize: 17,
-                            ),
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                                labelText:
-                                    "Enter the receipt number you're logging",
-                                labelStyle: loginPageText),
+                    if (_typeActive != "External" &&
+                        _activeChoice != "External")
+                      Container(
+                          margin:
+                              const EdgeInsets.only(bottom: 10.5, top: 10.5),
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            color: secondaryColour.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                        )),
+                          height: 60,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: TextFormField(
+                              controller: _receiptController,
+                              validator: (value) {
+                                if (value == "") {
+                                  return "Please enter the receipt number matching the evidence";
+                                }
+                                return null;
+                              },
+                              onChanged: (value) => setState(() {
+                                _formKey.currentState?.validate();
+                              }),
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 17,
+                              ),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                  labelText:
+                                      "Enter the receipt number you're logging",
+                                  labelStyle: loginPageText),
+                            ),
+                          )),
 
                     // Upload evidence - compulsory field
                     Row(
@@ -479,16 +474,12 @@ class _LogHoursFormState extends State<LogHoursForm> {
                                 'Step 4 : Upload photos of your evidence',
                                 style: loginPageText.copyWith(
                                     fontSize: 14, color: primaryColour))),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                            child: LinearProgressIndicator(
-                                value: 4 / 5,
-                                backgroundColor: primaryColour,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  secondaryColour,
-                                ))),
+                        Container(
+                          child: Icon(
+                            Icons.image,
+                            color: secondaryColour,
+                          ),
+                        )
                       ],
                     ),
 
@@ -531,6 +522,10 @@ class _LogHoursFormState extends State<LogHoursForm> {
                         ),
                       ),
 
+                    SizedBox(
+                      height: 10,
+                    ),
+
                     // Upload any additional photos field
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -543,13 +538,6 @@ class _LogHoursFormState extends State<LogHoursForm> {
                         const SizedBox(
                           width: 20,
                         ),
-                        Expanded(
-                            child: LinearProgressIndicator(
-                                value: 1,
-                                backgroundColor: primaryColour,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  secondaryColour,
-                                ))),
                       ],
                     ),
 
@@ -559,6 +547,7 @@ class _LogHoursFormState extends State<LogHoursForm> {
                         alignment: Alignment.centerLeft,
                         height: 150,
                         child: ImageUploads(
+                          size: 150,
                           onChange: handleOptionalImageChange,
                         )),
 
@@ -612,10 +601,11 @@ class _LogHoursFormState extends State<LogHoursForm> {
                                       fontSize: 20,
                                       color: primaryColour,
                                     )),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
-                                if (_isLoading) CircularProgressIndicator()
+                                if (_isLoading)
+                                  const CircularProgressIndicator()
                               ])),
                     ),
                   ],

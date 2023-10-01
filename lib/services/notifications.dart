@@ -1,15 +1,22 @@
 import 'dart:convert';
+import 'package:cce_project/services/badge_notifier.dart';
+import 'package:cce_project/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 // Handle all notification related services
 class NotificationServices {
+  final BuildContext context;
   String? token; // Keep reference to user token
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin(); // Display local notifications
+
+  NotificationServices(this.context);
 
   // Perform check for necessary permissions to receive notifications
   void requestPermission() async {
@@ -56,25 +63,40 @@ class NotificationServices {
   initInfo() {
     var androidInit =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
-    
-    var initializationSettingsIOS = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {});
 
-    var initSettings = InitializationSettings(android: androidInit, iOS: initializationSettingsIOS);
-    
+    var initializationSettingsIOS = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification:
+            (int id, String? title, String? body, String? payload) async {});
+
+    var initSettings = InitializationSettings(
+        android: androidInit, iOS: initializationSettingsIOS);
+
     flutterLocalNotificationsPlugin.initialize(initSettings);
 
     FirebaseMessaging.onMessage.listen((event) async {
+      Provider.of<BadgeNotifier>(context, listen: false).increment();
+
+      await LocalDatabaseProvider().insertNotification({
+        'id': event.data['id'],
+        'message': event.data['body'],
+        'type': event.data['type'],
+        'read': 0,
+        'date': DateTime.now().toIso8601String()
+      });
+
       AndroidNotificationDetails androidSpecs =
           const AndroidNotificationDetails('0', 'reddam-cce',
               importance: Importance.max,
               actions: [AndroidNotificationAction('1', 'ACCEPT')]);
 
+      DarwinNotificationDetails iosSpecs =
+          const DarwinNotificationDetails(presentBanner: true);
+
       NotificationDetails notifDetails =
-          NotificationDetails(android: androidSpecs);
+          NotificationDetails(android: androidSpecs, iOS: iosSpecs);
       await flutterLocalNotificationsPlugin.show(
           0, event.notification?.title, event.notification?.body, notifDetails,
           payload: event.data['title']);
@@ -82,7 +104,8 @@ class NotificationServices {
   }
 
   // Send notification to user with specific token
-  void sendNotification(String uid, String title, String body) async {
+  static void sendNotification(String uid, String title, String body,
+      {String? id, String? notificationType}) async {
     try {
       // Given user, extract their token from profile
       DocumentSnapshot userDoc =
@@ -101,7 +124,9 @@ class NotificationServices {
               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
               'status': 'done',
               'body': body,
-              'title': title
+              'title': title,
+              'id': id,
+              'type': notificationType
             },
             "notification": <String, dynamic>{
               "title": title,
