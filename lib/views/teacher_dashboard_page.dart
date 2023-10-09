@@ -1,6 +1,14 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cce_project/arguments/user_info_arguments.dart';
+import 'package:cce_project/panel_center/panel_center_page.dart';
+import 'package:cce_project/panel_left/panel_left_page.dart';
+import 'package:cce_project/panel_right/panel_right_page.dart';
+import 'package:cce_project/views/responsive_layout.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/components/side_menu.dart';
+import 'package:cce_project/widgets/app_bar_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
@@ -60,99 +68,45 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    // Hours progress bar
-    PrimerProgressBar progressBar = PrimerProgressBar(
-      segments: segments,
-      // Set the maximum number of hours for the bar
-      maxTotalValue: 150,
-      // Spacing between legend items
-      legendStyle: const SegmentedBarLegendStyle(spacing: 80),
-    );
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 100, 20, 10),
-          child: Column(
-            // Add spacing between column elements
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              // Students name
-              FittedBox(
-                  // This ensures that the student's name is resized to fit the screen
-                  fit: BoxFit.cover,
-                  child:
-                      Text(name, style: loginPageText.copyWith(fontSize: 200))),
-
-              // Reddam Crest
-              SizedBox(
-                height: 200,
-                width: 200,
-                child: Image.asset("assets/images/ReddamHouseCrest.svg.png"),
-              ),
-
-              Text("You are currently working towards", style: loginPageText),
-
-              // Current objective
-              Text(
-                "Full Colours",
-                style: loginPageText,
-              ),
-
-              // Progress bar
-              Container(
-                child: progressBar,
-              ),
-
-              // Active hour percentage
-              Container(
-                width: 150,
-                height: 150,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    width: 2,
-                    color: secondaryColour,
-                  ),
-                ),
-                child: Text("80% \n Active",
-                    style: loginPageText, textAlign: TextAlign.center),
-              ),
-
-              // Log hours button
-              OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(
-                    color: primaryColour,
-                    width: 1.5,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Center(
-                            child: Text(
-                              'log hours',
-                              style: loginPageText.copyWith(
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ))
-                  ],
-                ),
-              ),
-            ],
-          ),
+      appBar: PreferredSize(
+          preferredSize: Size(double.infinity, 100),
+          child: (ResponsiveLayout.isTinyLimit(context) ||
+                  ResponsiveLayout.isTinyHeightLimit(context))
+              ? Container()
+              : AppBarWidget()),
+      body: ResponsiveLayout(
+        tiny: Container(),
+        phone: PanelCenterPage(),
+        tablet: Row(
+          children: [
+            Expanded(
+              child: PanelLeftPage(),
+            ),
+            Expanded(child: PanelCenterPage()),
+          ],
+        ),
+        largeTablet: Row(
+          children: [
+            Expanded(
+              child: PanelLeftPage(),
+            ),
+            Expanded(child: PanelCenterPage()),
+            Expanded(child: PanelRightPage()),
+          ],
+        ),
+        computer: Row(
+          children: [
+            Expanded(
+              child: PanelLeftPage(),
+            ),
+            Expanded(child: PanelCenterPage()),
+            Expanded(child: PanelRightPage()),
+          ],
         ),
       ),
+      drawer: SideMenu(),
+      backgroundColor: primaryColour.withOpacity(0.9),
     );
   }
 }
