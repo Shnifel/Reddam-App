@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'views/login_page.dart';
-import 'views/welcome_page.dart';
 import 'views/upload_page.dart';
 import 'views/signup_page.dart';
 import 'views/student_dashboard_page.dart';
@@ -28,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Kollektif',
       ),
-      home: const WelcomePage(),
+      home: const LoginPage(),
       // Named routes in the app
       routes: {
         '/loginPage': (context) => const LoginPage(),
