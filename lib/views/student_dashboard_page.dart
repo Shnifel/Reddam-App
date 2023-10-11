@@ -8,6 +8,7 @@ import 'package:cce_project/my_icons_icons.dart';
 import 'upload_page.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -25,7 +26,7 @@ class StudentDashboardPage extends StatelessWidget {
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
-      body: StudentDashboard(userID, name, goal, activeHours, passiveHours, goalHours),
+      body: StudentDashboard(userID, name, goal, goalHours, activeHours, passiveHours),
     );
   }
 }
