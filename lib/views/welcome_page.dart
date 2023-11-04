@@ -27,15 +27,15 @@ class WelcomePage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     //go to login page
-                    User? currentUser = AuthService().currentUser;
-                    if (currentUser == null) {
+                    // User? currentUser = AuthService().currentUser;
+                    // if (currentUser == null) {
                       Navigator.pushNamed(context, '/loginPage');
-                    } else {
-                      print("Here uid is $currentUser.uid");
-                      Navigator.pushNamed(context, '/studentDashboardPage',
-                          arguments:
-                              UserInfoArguments(currentUser.uid, "Test"));
-                    }
+                    // } else {
+                    //   print("Here uid is $currentUser.uid");
+                    //   Navigator.pushNamed(context, '/studentDashboardPage',
+                    //       arguments:
+                    //           UserInfoArguments(currentUser.uid, "Test"));
+                    // }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColour,
