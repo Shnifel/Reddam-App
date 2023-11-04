@@ -1,12 +1,19 @@
 import 'package:cce_project/arguments/user_info_arguments.dart';
+import 'package:cce_project/services/badge_notifier.dart';
 import 'package:cce_project/services/firestore.dart';
+import 'package:cce_project/services/notifications.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/hours_history_page.dart';
+import 'package:cce_project/views/hours_log_page.dart';
+import 'package:cce_project/views/hours_page.dart';
+import 'package:cce_project/views/notifications_page.dart';
+import 'package:cce_project/widgets/notification.dart' as Notification;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
-import 'upload_page.dart';
-import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class StudentDashboardPage extends StatelessWidget {
@@ -15,94 +22,104 @@ class StudentDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Extract the arguments passed to this page
-    UserInfoArguments arguments = ModalRoute.of(context)!.settings.arguments as UserInfoArguments;
+    UserInfoArguments arguments =
+        ModalRoute.of(context)!.settings.arguments as UserInfoArguments;
     String userID = arguments.userID;
     String name = arguments.name;
     String goal = 'Full Colours';
-    int goalHours = 150;
-    int activeHours = 50;
-    int passiveHours = 30;
+    double activeHours = 0;
+    double passiveHours = 0;
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
-      body: StudentDashboard(userID, name, goal, activeHours, passiveHours, goalHours),
+      body: StudentDashboard(userID, name, goal, activeHours, passiveHours),
     );
   }
 }
 
 class StudentDashboard extends StatefulWidget {
-
   //We have to initialise the variables
   String userID = '';
   String name = '';
   String goal = '';
-  int goalHours = 0;
-  int activeHours = 0;
-  int passiveHours = 0;
+  double activeHours = 0;
+  double passiveHours = 1;
 
   //Constructor
-  StudentDashboard(String passedUserID, String passedName, String passedGoal, int passedGoalHours, int passedActiveHours, int passedPassiveHours, {super.key}) {
+  StudentDashboard(String passedUserID, String passedName, String passedGoal,
+      double passedActiveHours, double passedPassiveHours,
+      {super.key}) {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
-    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
   }
 
   @override
-  State<StudentDashboard> createState() => _StudentDashboardState(userID, name, goal, goalHours, activeHours, passiveHours);
+  State<StudentDashboard> createState() =>
+      _StudentDashboardState(userID, name, goal, activeHours, passiveHours);
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
-
   //We have to initialise the variable before getting it from the constructor
   String userID = '';
   String name = '';
   String goal = '';
-  int goalHours = 0;
-  int activeHours = 0;
-  int passiveHours = 0;
+  double activeHours = 0;
+  double passiveHours = 0;
   List<Segment> segments = [];
-  DateTime today=DateTime.now();
- // String currentday=today.toString().split(" ")[0];
+  double percentActive = 0;
+  DateTime today = DateTime.now();
+
+  void _onDaySelected(DateTime day, DateTime FocusedDay) {
+    setState(() {
+      today = day;
+    });
+  }
 
   //variables for bottom nav bar
   int currentIndex = 0; //keeps track of current selected item
+  String? focusDoc;
 
   void onTapItem(int index) {
     setState(() {
+      focusDoc = null;
       currentIndex = index;
     });
   }
 
-  void _onDaySelected(DateTime day, DateTime FocusedDay){
-    setState(() {
-      today=day;
-    });
-  }
-
   //Constructor
-  _StudentDashboardState(String passedUserID, String passedName, String passedGoal, int passedGoalHours, int passedActiveHours, int passedPassiveHours) {
+  _StudentDashboardState(String passedUserID, String passedName,
+      String passedGoal, double passedActiveHours, double passedPassiveHours) {
     userID = passedUserID;
     name = passedName;
     goal = passedGoal;
-    goalHours = passedGoalHours;
     activeHours = passedActiveHours;
     passiveHours = passedPassiveHours;
-    
+
     segments = [
-      Segment(value: passiveHours, color: primaryColour, label: const Text("Passive Hours")),
-      Segment(value: activeHours, color: secondaryColour, label: const Text("Active Hours")),
+      Segment(
+          value: passiveHours.ceil(),
+          color: primaryColour,
+          label: const Text("Passive Hours")),
+      Segment(
+          value: activeHours.ceil(),
+          color: secondaryColour,
+          label: const Text("Active Hours")),
     ];
   }
 
   // String name = '';
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getData();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    aggregateHours();
+    NotificationServices notif = NotificationServices(context);
+    notif.requestPermission();
+    notif.getToken();
+    notif.initInfo();
+  }
 
   // void getData() async {
   //   //Retrieve the users full name
@@ -110,34 +127,58 @@ class _StudentDashboardState extends State<StudentDashboard> {
   //   setState(() {});
   // }
 
+  void aggregateHours() async {
+    FirestoreService firestoreService = FirestoreService(uid: userID);
+    Map<String, double> hours =
+        await firestoreService.aggregateHours() as Map<String, double>;
+    setState(() {
+      passiveHours = hours['Passive']!;
+      activeHours = hours['Active']!;
+      if (passiveHours == 0 && activeHours == 0) {
+        percentActive = 0;
+      } else {
+        percentActive =
+            (100.0 * hours['Active']!) / (hours['Active']! + hours['Passive']!);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    int badgeCount = context.watch<BadgeNotifier>().count;
 
     // Hours progress bar
     PrimerProgressBar progressBar = PrimerProgressBar(
-      segments: segments,
+      segments: segments = [
+        Segment(
+            value: passiveHours.ceil(),
+            color: primaryColour,
+            label: const Text("Passive Hours")),
+        Segment(
+            value: activeHours.ceil(),
+            color: secondaryColour,
+            label: const Text("Active Hours")),
+      ],
       // Set the maximum number of hours for the bar
-      maxTotalValue: goalHours,
+      maxTotalValue: 500,
       // Spacing between legend items
       legendStyle: const SegmentedBarLegendStyle(spacing: 80),
     );
 
     //bottom nav
     BottomNavigationBar bottomNavigationBar = BottomNavigationBar(
-      selectedItemColor: primaryColour,
-      unselectedItemColor: primaryColour.withOpacity(0.4),
-      elevation: 0,
+        selectedItemColor: primaryColour,
+        unselectedItemColor: primaryColour.withOpacity(0.4),
+        elevation: 0,
 
-      //allowing for screen switching with item switching
-      currentIndex: currentIndex,
-      onTap: onTapItem,
-      
-      items: [
-        //icon 0: home summary
-        BottomNavigationBarItem(
-          icon: Text(
-                String.fromCharCode(
-                    MyIcons.home_unfilled.codePoint),
+        //allowing for screen switching with item switching
+        currentIndex: currentIndex,
+        onTap: onTapItem,
+        items: [
+          //icon 0: home summary
+          BottomNavigationBarItem(
+              icon: Text(
+                String.fromCharCode(MyIcons.home_unfilled.codePoint),
                 style: TextStyle(
                   inherit: false,
                   fontSize: 25.0,
@@ -147,46 +188,49 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   package: MyIcons.home_unfilled.fontPackage,
                 ),
               ),
-          activeIcon: Icon(Icons.home_filled),
-          label: "Home"
-        ),
+              activeIcon: Icon(Icons.home_filled),
+              label: "Home"),
 
-        //icon 1: log hours
-        BottomNavigationBarItem(
-          icon: Icon(Icons.access_time_sharp), 
-          activeIcon: Icon(Icons.access_time_filled),
-          label: "Hours"
-        ),
-        
-        //icon 2: notifications
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications_none_sharp), 
-          activeIcon: Icon(Icons.notifications_sharp),
-          label: "Notifications"
-        ),
-        
-        //icon 3: gallery
-        BottomNavigationBarItem(
-          icon: Icon(Icons.photo_library_outlined), 
-          activeIcon: Icon(Icons.photo_library), 
-          label: "Gallery"
-        ),
+          //icon 1: log hours
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.access_time_sharp),
+              activeIcon: Icon(Icons.access_time_filled),
+              label: "Hours"),
 
-        //icon 4: events
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today_outlined), 
-          activeIcon: Icon(Icons.calendar_month), 
-          label: "Events"
-        ),
-      ]
-    
-    );
+          //icon 2: notifications
+          BottomNavigationBarItem(
+              icon: badgeCount != 0
+                  ? Badge(
+                      label: Text('$badgeCount'),
+                      child: const Icon(Icons.notifications_none_sharp))
+                  : const Icon(Icons.notifications_none_sharp),
+              activeIcon: const Icon(Icons.notifications_sharp),
+              label: "Notifications"),
 
-    List<Widget> screens = [ //moving between screens
+          //icon 3: gallery
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.photo_library_outlined),
+              activeIcon: Icon(Icons.photo_library),
+              label: "Gallery"),
 
-    //home screen
-        Container(
-        color: Color(0xfffffff2),
+          //icon 4: events
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today_outlined),
+              activeIcon: Icon(Icons.calendar_month),
+              label: "Events"),
+
+          //icon 5 : logs history
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.history_outlined),
+              activeIcon: Icon(Icons.history),
+              label: "My hours"),
+        ]);
+
+    List<Widget> screens = [
+      //moving between screens, implemented at the bottom of the page
+
+      //home screen
+      SingleChildScrollView(
         child: Column(
           children: [
             Padding(
@@ -209,42 +253,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
                   // Reddam Crest
                   SizedBox(
-                    height: 350,
+                    height: 75,
                     width: 200,
                     child:
                         Image.asset("assets/images/ReddamHouseCrest.svg.png"),
                   ),
 
-                  //goal
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text("You are currently working towards:",
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
-                          )),
-
-                      // Current objective
-                      Text(
-                        goal,
-                        style: TextStyle(
-                          color: primaryColour,
-                          fontSize: 23,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 15),
-
-                  //progress
                   Container(
                     decoration: BoxDecoration(
                         color: secondaryColour.withOpacity(0.1),
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 25),
+                      padding: const EdgeInsets.symmetric(vertical: 25),
                       child: Column(children: <Widget>[
                         // Active hour percentage
                         Container(
@@ -258,19 +279,43 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               color: secondaryColour,
                             ),
                           ),
-                          child: Text(
-                              "${(activeHours / 1.5).round()}% \n Active",
+                          child: Text("${(percentActive).round()}% \n Active",
                               style: loginPageText,
                               textAlign: TextAlign.center),
                         ),
 
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
 
                         // Progress bar
                         Container(
                           child: progressBar,
                         ),
                       ]),
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("You are currently working towards:",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                            )),
+
+                        // Current objective
+                        Text(
+                          goal,
+                          style: TextStyle(
+                            color: primaryColour,
+                            fontSize: 23,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -281,54 +326,52 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
 
       //hours
-      Center(
-        child: Text("Hours!!"),
+      const Center(
+        child: HoursLog(),
       ),
 
       //notifications
       Center(
-        child: Text("notifications!!"),
-      ),
+          child: NotificationsPage(
+        navigateToHoursHistory: (String? focus) => {
+          setState(
+            () {
+              currentIndex = 5;
+              focusDoc = focus;
+            },
+          )
+        },
+      )),
 
       //gallery
-      ImageUploads(),
+      const Center(
+        child: Text("gallery!!"),
+      ),
 
       //events
       Padding(
-        padding: const EdgeInsets.only(top: 40.0),
-        child: Center(
+          padding: const EdgeInsets.only(top: 40.0),
+          child: Center(
+              child: Column(children: <Widget>[
+            TableCalendar(
+              rowHeight: 75,
+              headerStyle: const HeaderStyle(
+                  formatButtonVisible: false, titleCentered: true),
+              availableGestures: AvailableGestures.all,
+              selectedDayPredicate: (day) => isSameDay(day, today),
+              focusedDay: today,
+              firstDay: DateTime.utc(2023, 09, 20),
+              lastDay: DateTime.utc(2030, 12, 31),
+              onDaySelected: _onDaySelected,
+            ),
+          ]))),
 
-
-    child: Column(
-    children: <Widget>[
-
-
-
-    TableCalendar(rowHeight: 75,
-          headerStyle: HeaderStyle(formatButtonVisible: false,titleCentered: true),
-          availableGestures: AvailableGestures.all,
-          selectedDayPredicate: (day)=> isSameDay(day,today),
-          focusedDay:today,
-          firstDay: DateTime.utc(2023,09,20),
-          lastDay: DateTime.utc(2030,12,31),
-         onDaySelected: _onDaySelected,
-
-    ),
-
-
-    ],
-
-    ),
-    ),
-      )
+      // Hours history page
+      Center(child: HoursHistoryPage(focus: focusDoc)),
     ];
-
-
 
     return Scaffold(
       body: screens[currentIndex],
-      extendBody: true,
-
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           // sets the background color of the `BottomNavigationBar`
@@ -337,6 +380,5 @@ class _StudentDashboardState extends State<StudentDashboard> {
         child: bottomNavigationBar,
       ),
     );
-
   }
 }

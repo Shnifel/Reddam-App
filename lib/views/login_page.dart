@@ -107,12 +107,20 @@ Widget buildLoginButton(
 
             String name = (await FirestoreService(uid: userID).getUserData())!;
 
-            Navigator.pushNamed(context, '/studentDashboardPage',
-                arguments: UserInfoArguments(userID, name));
+            Map<String, dynamic> user_data =
+                (await FirestoreService(uid: userID).getData(userID))!;
+
+            bool isTeacher = user_data["teacher"];
+
+            if (isTeacher) {
+              Navigator.pushNamed(context, '/teacherDashboardPage',
+                  arguments: UserInfoArguments(userID, name));
+            } else {
+              Navigator.pushNamed(context, '/studentDashboardPage',
+                  arguments: UserInfoArguments(userID, name));
+            }
 
             //go to test page
-            /*Navigator.pushNamed(context, '/studentDashboardPage',
-                arguments: UserInfoArguments(userID, name));*/
           } on FirebaseAuthException catch (e) {
             if (e.code == 'user-not-found') {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -123,6 +131,13 @@ Widget buildLoginButton(
                 ),
               );
             } else if (e.code == 'wrong-password') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                  content: Text("Wrong password provided for that user",
+                      textAlign: TextAlign.center),
+                ),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   backgroundColor: Color.fromARGB(255, 123, 11, 24),
@@ -148,7 +163,7 @@ Widget buildLoginButton(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Center(
                     child: Text(
-                      'log in',
+                      'Log in',
                       style: loginPageText.copyWith(
                         fontSize: 30,
                       ),
@@ -159,6 +174,42 @@ Widget buildLoginButton(
             ))
           ],
         ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          TextButton(
+              onPressed: () {
+                try {
+                  FirebaseAuth.instance
+                      .sendPasswordResetEmail(email: emailController.text);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Color.fromARGB(255, 40, 189, 11),
+                      content: Text(
+                          "Please check your emails to reset your password",
+                          textAlign: TextAlign.center),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Color.fromARGB(255, 123, 11, 24),
+                      content: Text("Invalid email specified",
+                          textAlign: TextAlign.center),
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'Forgot Password',
+                style: loginPageText.copyWith(
+                    fontSize: 14,
+                    color: secondaryColour,
+                    fontStyle: FontStyle.italic),
+                textAlign: TextAlign.right,
+              )),
+        ],
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
