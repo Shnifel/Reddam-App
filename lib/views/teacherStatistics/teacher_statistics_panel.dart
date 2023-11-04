@@ -4,6 +4,7 @@ import 'package:cce_project/statistics/graph_data.dart';
 import 'package:cce_project/styles.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class TeacherStatisticsPanelPage extends StatefulWidget {
@@ -86,6 +87,8 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
                             edgeLabelPlacement: EdgeLabelPlacement.shift, 
                             // Interval type will be months
                             intervalType: DateTimeIntervalType.months,
+                            dateFormat: DateFormat.MMM(),
+                            
                             interval: 1),
                       primaryYAxis: NumericAxis(labelFormat: '{value}')
                     )
