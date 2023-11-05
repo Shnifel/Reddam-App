@@ -1,4 +1,5 @@
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/widgets/student_widget.dart';
 import 'package:flutter/material.dart';
 
 class TeacherSubmissionsPanelPage extends StatefulWidget {
@@ -12,9 +13,17 @@ class _TeacherSubmissionsPanelPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-      ),
-    );
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+            child: Container(
+                decoration: BoxDecoration(color: Colors.white),
+                child: Column(
+                  children: [
+                    Text("Log hours"),
+                    StudentDataRow({"Name": "Reveluv"}),
+                    StudentDataRow({"Name": "Reveluv"}),
+                    StudentDataRow({"Name": "Reveluv"}),
+                  ],
+                ))));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/authentication.dart';
+import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/styles.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,16 +26,24 @@ class WelcomePage extends StatelessWidget {
               //get started button
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     //go to login page
                     User? currentUser = AuthService().currentUser;
                     if (currentUser == null) {
                       Navigator.pushNamed(context, '/loginPage');
                     } else {
-                      print("Here uid is $currentUser.uid");
-                      Navigator.pushNamed(context, '/studentDashboardPage',
-                          arguments:
-                              UserInfoArguments(currentUser.uid, "Test"));
+                      Map<dynamic, dynamic> userData =
+                          await FirestoreService(uid: currentUser.uid)
+                              .getData(currentUser.uid);
+                      if (userData["isTeacher"]) {
+                        Navigator.pushNamed(context, '/teacherDashboardPage',
+                            arguments: UserInfoArguments(
+                                currentUser.uid, userData["firstName"]));
+                      } else {
+                        Navigator.pushNamed(context, '/studentDashboardPage',
+                            arguments:
+                                UserInfoArguments(currentUser.uid, "Test"));
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
