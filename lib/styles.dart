@@ -9,7 +9,7 @@ const TextStyle welcomePageText = TextStyle(
   fontWeight: FontWeight.normal,
 );
 
-TextStyle loginPageText = TextStyle(
+const TextStyle loginPageText = TextStyle(
   fontSize: 18,
   color: primaryColour,
   decoration: TextDecoration.none,
@@ -17,8 +17,8 @@ TextStyle loginPageText = TextStyle(
 );
 
 //app colours
-Color primaryColour = const Color.fromRGBO(0, 40, 94, 1);
-Color secondaryColour = const Color.fromRGBO(189, 158, 85, 1);
-Color tertiaryColour = const Color.fromRGBO(241, 237, 210, 1);
+const Color primaryColour = Color.fromRGBO(0, 40, 94, 1);
+const Color secondaryColour = Color.fromRGBO(189, 158, 85, 1);
+const Color tertiaryColour = Color.fromRGBO(241, 237, 210, 1);
 
 
