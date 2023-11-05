@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class TeacherStatisticsPanelPage extends StatefulWidget {
   @override
@@ -49,84 +50,40 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
 
   @override
   Widget build(BuildContext context) {
-    _tooltipBehavior = TooltipBehavior(enable: true);
+    List<int> list = [1, 2, 3, 4, 5];
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    var padding = MediaQuery.of(context).padding;
+    double newheight = height - padding.top - padding.bottom - kToolbarHeight;
+    int _current = 0;
+    final CarouselController _controller = CarouselController();
     return Scaffold(
       appBar: null,
-      body: SafeArea(
-        child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // const SizedBox(
-                //   height: 30.0,
-                //   child: Text(
-                //     'Direct Emissions by lpg-cooking, lpg-lab  and diesel (in kg)',
-                //     style: loginPageText,
-                //   ),
-                // ),
-                Container(
-                  height: 400,
-                  child: SfCartesianChart(
-                      legend: const Legend(
-                        isVisible: true, 
-                        // Overflowing legend content will be wraped
-                        overflowMode: LegendItemOverflowMode.wrap,
-                        position: LegendPosition.bottom,
-                      ),
-                      //plotAreaBackgroundColor: primaryColour,
-                      // Palette colors
-                      palette: const <Color>[
-                          primaryColour,
-                          secondaryColour,
-                      ],
-                      //Enables the tooltip for all the series
-                      tooltipBehavior: _tooltipBehavior,
-                      //This allows us to not have to specify how many lines there will be
-                      series: getLineSeries(_LineChartData),
-                      primaryXAxis: DateTimeAxis(
-                            edgeLabelPlacement: EdgeLabelPlacement.shift, 
-                            // Interval type will be months
-                            intervalType: DateTimeIntervalType.months,
-                            dateFormat: DateFormat.MMM(),
-                            
-                            interval: 1),
-                      primaryYAxis: NumericAxis(labelFormat: '{value}')
-                    )
-                  ),
-                  // Container(
-                  //   height: 200,
-                  //   width: double.infinity,
-                  //   color: Colors.red,
-                  // ),
-                  // Container(
-                  //   height: 200,
-                  //   width: double.infinity,
-                  //   color: Colors.amber,
-                  // ),
-                  // Container(
-                  //   height: 200,
-                  //   width: double.infinity,
-                  //   color: Colors.blue,
-                  // ),
-                  // Container(
-                  //   height: 200,
-                  //   width: double.infinity,
-                  //   color: Colors.red,
-                  // ),
-                  // Container(
-                  //   height: 200,
-                  //   width: double.infinity,
-                  //   color: Colors.amber,
-                  // ),
-                  // Container(
-                  //   height: 200,
-                  //   width: double.infinity,
-                  //   color: Colors.blue,
-                  // )
-              ]
-            )
-        )
-      ));
+      body: Container(
+        child: CarouselSlider(
+          carouselController: _controller,
+          options: CarouselOptions(
+            aspectRatio: width / newheight,
+            initialPage: 0,
+            enableInfiniteScroll: true,
+            reverse: false,
+            //enlargeCenterPage: true,
+            enlargeFactor: 0.3,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _current = index;
+              });
+            },
+            scrollDirection: Axis.horizontal,
+          ),
+          items: list
+              .map((item) => Container(
+                    child: Center(child: Text(item.toString())),
+                    color: Colors.green,
+                  ))
+              .toList(),
+        )),
+    );
   }
 
   List<SplineSeries<LineData, DateTime>> getLineSeries(List _LineChartData) {

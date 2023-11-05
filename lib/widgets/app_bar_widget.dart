@@ -102,7 +102,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             )
           else
             Padding(
-              padding: const EdgeInsets.all(10.0 * 2),
+              padding: const EdgeInsets.fromLTRB(30.0 * 2, 60, 10.0 * 2, 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -111,6 +111,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     _buttonNames[_currentSelectedButton],
                     style: TextStyle(
                       color: Colors.white,
+                      fontSize: 20
                     ),
                   ),
                   Container(
