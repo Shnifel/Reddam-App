@@ -1,5 +1,6 @@
 import 'package:cce_project/styles.dart';
 import 'package:cce_project/views/teacherEditUser/teacher_edit_user_page.dart';
+import 'package:cce_project/views/teacherHourLogs/teacher_log_hours.dart';
 import 'package:cce_project/views/teacherNotifications/teacher_notifications_page.dart';
 import 'package:cce_project/views/teacherSettings/teacher_settings_page.dart';
 import 'package:cce_project/views/teacherStatistics/teacher_statistics_page.dart';
