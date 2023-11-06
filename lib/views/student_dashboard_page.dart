@@ -15,6 +15,7 @@ import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/my_icons_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'student_home_page.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -26,13 +27,10 @@ class StudentDashboardPage extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as UserInfoArguments;
     String userID = arguments.userID;
     String name = arguments.name;
-    String goal = 'Full Colours';
-    double activeHours = 0;
-    double passiveHours = 0;
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
-      body: StudentDashboard(userID, name, goal, activeHours, passiveHours),
+      body: StudentDashboard(userID, name),
     );
   }
 }
@@ -41,35 +39,22 @@ class StudentDashboard extends StatefulWidget {
   //We have to initialise the variables
   String userID = '';
   String name = '';
-  String goal = '';
-  double activeHours = 0;
-  double passiveHours = 1;
 
   //Constructor
-  StudentDashboard(String passedUserID, String passedName, String passedGoal,
-      double passedActiveHours, double passedPassiveHours,
-      {super.key}) {
+  StudentDashboard(String passedUserID, String passedName, {super.key}) {
     userID = passedUserID;
     name = passedName;
-    goal = passedGoal;
-    activeHours = passedActiveHours;
-    passiveHours = passedPassiveHours;
   }
 
   @override
   State<StudentDashboard> createState() =>
-      _StudentDashboardState(userID, name, goal, activeHours, passiveHours);
+      _StudentDashboardState(userID, name);
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
   //We have to initialise the variable before getting it from the constructor
   String userID = '';
   String name = '';
-  String goal = '';
-  double activeHours = 0;
-  double passiveHours = 0;
-  List<Segment> segments = [];
-  double percentActive = 0;
   DateTime today = DateTime.now();
 
   void _onDaySelected(DateTime day, DateTime FocusedDay) {
@@ -90,31 +75,16 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }
 
   //Constructor
-  _StudentDashboardState(String passedUserID, String passedName,
-      String passedGoal, double passedActiveHours, double passedPassiveHours) {
+  _StudentDashboardState(String passedUserID, String passedName) {
     userID = passedUserID;
     name = passedName;
-    goal = passedGoal;
-    activeHours = passedActiveHours;
-    passiveHours = passedPassiveHours;
-
-    segments = [
-      Segment(
-          value: passiveHours.ceil(),
-          color: primaryColour,
-          label: const Text("Passive Hours")),
-      Segment(
-          value: activeHours.ceil(),
-          color: secondaryColour,
-          label: const Text("Active Hours")),
-    ];
   }
 
   // String name = '';
   @override
   void initState() {
     super.initState();
-    aggregateHours();
+    // aggregateHours();
     NotificationServices notif = NotificationServices(context);
     notif.requestPermission();
     notif.getToken();
@@ -127,43 +97,11 @@ class _StudentDashboardState extends State<StudentDashboard> {
   //   setState(() {});
   // }
 
-  void aggregateHours() async {
-    FirestoreService firestoreService = FirestoreService(uid: userID);
-    Map<String, double> hours =
-        await firestoreService.aggregateHours() as Map<String, double>;
-    setState(() {
-      passiveHours = hours['Passive']!;
-      activeHours = hours['Active']!;
-      if (passiveHours == 0 && activeHours == 0) {
-        percentActive = 0;
-      } else {
-        percentActive =
-            (100.0 * hours['Active']!) / (hours['Active']! + hours['Passive']!);
-      }
-    });
-  }
+  
 
   @override
   Widget build(BuildContext context) {
     int badgeCount = context.watch<BadgeNotifier>().count;
-
-    // Hours progress bar
-    PrimerProgressBar progressBar = PrimerProgressBar(
-      segments: segments = [
-        Segment(
-            value: passiveHours.ceil(),
-            color: primaryColour,
-            label: const Text("Passive Hours")),
-        Segment(
-            value: activeHours.ceil(),
-            color: secondaryColour,
-            label: const Text("Active Hours")),
-      ],
-      // Set the maximum number of hours for the bar
-      maxTotalValue: 500,
-      // Spacing between legend items
-      legendStyle: const SegmentedBarLegendStyle(spacing: 80),
-    );
 
     //bottom nav
     BottomNavigationBar bottomNavigationBar = BottomNavigationBar(
@@ -181,7 +119,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 String.fromCharCode(MyIcons.home_unfilled.codePoint),
                 style: TextStyle(
                   inherit: false,
-                  fontSize: 25.0,
+                  fontSize: 20.0,
                   color: primaryColour.withOpacity(0.4),
                   fontWeight: FontWeight.bold,
                   fontFamily: MyIcons.home_unfilled.fontFamily,
@@ -230,100 +168,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       //moving between screens, implemented at the bottom of the page
 
       //home screen
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 75, 20, 10),
-              child: Column(
-                // Add spacing between column elements
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  // Students name
-                  Row(
-                    children: [
-                      FittedBox(
-                          // This ensures that the student's name is resized to fit the screen
-                          fit: BoxFit.cover,
-                          child: Text("Hi, $name!",
-                              style: loginPageText.copyWith(
-                                  fontSize: 35, fontWeight: FontWeight.bold))),
-                    ],
-                  ),
-
-                  // Reddam Crest
-                  SizedBox(
-                    height: 75,
-                    width: 200,
-                    child:
-                        Image.asset("assets/images/ReddamHouseCrest.svg.png"),
-                  ),
-
-                  Container(
-                    decoration: BoxDecoration(
-                        color: secondaryColour.withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 25),
-                      child: Column(children: <Widget>[
-                        // Active hour percentage
-                        Container(
-                          width: 150,
-                          height: 150,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 2,
-                              color: secondaryColour,
-                            ),
-                          ),
-                          child: Text("${(percentActive).round()}% \n Active",
-                              style: loginPageText,
-                              textAlign: TextAlign.center),
-                        ),
-
-                        const SizedBox(height: 15),
-
-                        // Progress bar
-                        Container(
-                          child: progressBar,
-                        ),
-                      ]),
-                    ),
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("You are currently working towards:",
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 20,
-                            )),
-
-                        // Current objective
-                        Text(
-                          goal,
-                          style: const TextStyle(
-                            color: primaryColour,
-                            fontSize: 23,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      StudentHomePage(name, userID),
 
       //hours
       const Center(
