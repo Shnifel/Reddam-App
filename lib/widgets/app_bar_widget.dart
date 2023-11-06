@@ -37,6 +37,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             )
           else
             IconButton(
+              padding: const EdgeInsets.only(left: 10, top: 60),
               color: Colors.white,
               iconSize: 30,
               onPressed: () {
@@ -102,7 +103,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             )
           else
             Padding(
-              padding: const EdgeInsets.all(10.0 * 2),
+              padding: const EdgeInsets.only(left: 40, top: 70),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -111,6 +112,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     _buttonNames[_currentSelectedButton],
                     style: TextStyle(
                       color: Colors.white,
+                      fontSize: 20
                     ),
                   ),
                   Container(
@@ -126,6 +128,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             ),
           Spacer(),
           IconButton(
+            padding: const EdgeInsets.only(top: 60),
             color: Colors.white,
             iconSize: 30,
             onPressed: () {},
@@ -134,23 +137,24 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           Stack(
             children: [
               IconButton(
+                padding: const EdgeInsets.only(right: 10, top: 60),
                 color: Colors.white,
                 iconSize: 30,
                 onPressed: () {},
                 icon: Icon(Icons.notifications_none_outlined),
               ),
-              Positioned(
-                right: 6,
-                top: 6,
-                child: CircleAvatar(
-                  backgroundColor: Colors.pink,
-                  radius: 8,
-                  child: Text(
-                    "3",
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   right: 10,
+              //   top: 10,
+              //   child: CircleAvatar(
+              //     backgroundColor: Colors.pink,
+              //     radius: 8,
+              //     child: Text(
+              //       "3",
+              //       style: TextStyle(fontSize: 10, color: Colors.white),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           if (!ResponsiveLayout.isPhone(context))

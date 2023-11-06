@@ -35,7 +35,7 @@ class WelcomePage extends StatelessWidget {
                       Map<dynamic, dynamic> userData =
                           await FirestoreService(uid: currentUser.uid)
                               .getData(currentUser.uid);
-                      if (userData["isTeacher"]) {
+                      if (userData["isTeacher"] != null && userData["isTeacher"]) {
                         Navigator.pushNamed(context, '/teacherDashboardPage',
                             arguments: UserInfoArguments(
                                 currentUser.uid, userData["firstName"]));

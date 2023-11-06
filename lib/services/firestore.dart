@@ -171,18 +171,39 @@ class FirestoreService {
         .where("date", isLessThanOrEqualTo: end)
         .get()
         .then(
-      (querySnapshot) {
+      (querySnapshot) async {
         for (var docSnapshot in querySnapshot.docs) {
           Map<String, dynamic> data = docSnapshot.data();
+          await getUserInfo(data["uid"]).then((d) {
+            Map<String, dynamic> userData = d;
+            data["grade"] = userData["grade"];
+            data["class"] = userData["class"];
+            data["house"] = userData["house"];
+          });
           allData.add(data);
           hours[data['hours_type']] =
               hours[data['hours_type']]! + data['amount'];
-          print('${docSnapshot.id} => ${docSnapshot.data()}');
         }
       },
       onError: (e) => print("Error completing: $e"),
     );
 
     return allData;
+  }
+
+  Future<Map<String, dynamic>> getUserInfo(uid) async {
+    var db = FirebaseFirestore.instance;
+
+    Map<String, dynamic> userData = {};
+
+    await db.collection("Users").doc(uid).get().then(
+      (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        userData = data;
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+
+    return userData;
   }
 }
