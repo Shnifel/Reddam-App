@@ -20,9 +20,6 @@ class _TeacherSubmissionsPanelPageState
                 child: Column(
                   children: [
                     Text("Log hours"),
-                    StudentDataRow({"Name": "Reveluv"}),
-                    StudentDataRow({"Name": "Reveluv"}),
-                    StudentDataRow({"Name": "Reveluv"}),
                   ],
                 ))));
   }

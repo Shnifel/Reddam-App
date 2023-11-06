@@ -110,7 +110,7 @@ Widget buildLoginButton(
             Map<String, dynamic> user_data =
                 (await FirestoreService(uid: userID).getData(userID))!;
 
-            bool? isTeacher = user_data["teacher"];
+            bool? isTeacher = user_data["isTeacher"];
 
             if (isTeacher != null && isTeacher) {
               Navigator.pushNamed(context, '/teacherDashboardPage',

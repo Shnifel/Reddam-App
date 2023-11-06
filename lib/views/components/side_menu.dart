@@ -1,6 +1,6 @@
 import 'package:cce_project/styles.dart';
 import 'package:cce_project/views/teacherEditUser/teacher_edit_user_page.dart';
-import 'package:cce_project/views/teacherHourLogs/teacher_log_hours.dart';
+import 'package:cce_project/views/teacherHourLogs/teacher_log_hours_page.dart';
 import 'package:cce_project/views/teacherNotifications/teacher_notifications_page.dart';
 import 'package:cce_project/views/teacherSettings/teacher_settings_page.dart';
 import 'package:cce_project/views/teacherStatistics/teacher_statistics_page.dart';
@@ -34,7 +34,7 @@ List<ButtonsInfo> _buttonNames = [
   ButtonsInfo(title: "Notifications", icon: Icons.notifications),
   ButtonsInfo(title: "Statistics", icon: Icons.pie_chart_sharp),
   ButtonsInfo(title: "Timetable", icon: Icons.calendar_month_sharp),
-  ButtonsInfo(title: "Submissions", icon: Icons.mark_email_read),
+  ButtonsInfo(title: "Log Hours", icon: Icons.access_time_outlined),
   ButtonsInfo(title: "Edit user", icon: Icons.verified_user),
   ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
 ];
@@ -123,13 +123,11 @@ class _SideMenu extends State<SideMenu> {
                               MaterialPageRoute(
                                   builder: (context) => TeacherEditPage()),
                             );
-                          } else if (_buttonNames[index].title ==
-                              "Submissions") {
+                          } else if (_buttonNames[index].title == "Log Hours") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      TeacherSubmissionsPage()),
+                                  builder: (context) => TeacherLogHoursPage()),
                             );
                           } else if (_buttonNames[index].title == "Timetable") {
                             Navigator.push(

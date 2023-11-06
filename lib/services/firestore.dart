@@ -149,26 +149,34 @@ class FirestoreService {
   }
 
   Future<List> getAllLogs() async {
-
     var db = FirebaseFirestore.instance;
 
     DateTime now = DateTime.now(); // The current date
-    DateTime start = DateTime(now.year, 1, 1); // Start date is the 1st of Jan of the current year
-    DateTime end = DateTime(now.year, 12, 31); // End date is the 31st of Dec of the current year
+    DateTime start = DateTime(
+        now.year, 1, 1); // Start date is the 1st of Jan of the current year
+    DateTime end = DateTime(
+        now.year, 12, 31); // End date is the 31st of Dec of the current year
 
-    Map<String, double> hours = {'Active': 0, 'Passive': 0}; // This will store the total hours for the year
+    Map<String, double> hours = {
+      'Active': 0,
+      'Passive': 0
+    }; // This will store the total hours for the year
 
     List allData = [];
 
-    await db.collection("Logs")
-      // Only consider dates in the current year
-      .where("date", isGreaterThanOrEqualTo: start)
-      .where("date", isLessThanOrEqualTo: end).get().then(
+    await db
+        .collection("Logs")
+        // Only consider dates in the current year
+        .where("date", isGreaterThanOrEqualTo: start)
+        .where("date", isLessThanOrEqualTo: end)
+        .get()
+        .then(
       (querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
           Map<String, dynamic> data = docSnapshot.data();
           allData.add(data);
-          hours[data['hours_type']] = hours[data['hours_type']]! + data['amount'];
+          hours[data['hours_type']] =
+              hours[data['hours_type']]! + data['amount'];
           print('${docSnapshot.id} => ${docSnapshot.data()}');
         }
       },
@@ -177,5 +185,4 @@ class FirestoreService {
 
     return allData;
   }
-
 }

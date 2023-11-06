@@ -310,7 +310,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                         // Current objective
                         Text(
                           goal,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: primaryColour,
                             fontSize: 23,
                           ),
