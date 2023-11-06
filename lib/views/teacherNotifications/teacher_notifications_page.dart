@@ -28,7 +28,7 @@ class _TeacherNotifications extends State<TeacherNotificationsPage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget()),
+              : AppBarWidget(2)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherNotificationsPanelPage(),

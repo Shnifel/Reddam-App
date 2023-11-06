@@ -28,7 +28,7 @@ class _TeacherTimetable extends State<TeacherTimetablePage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget()),
+              : AppBarWidget(4)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherTimetablePanelPage(),

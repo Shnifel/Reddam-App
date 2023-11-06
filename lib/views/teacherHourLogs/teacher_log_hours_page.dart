@@ -29,7 +29,7 @@ class _TeacherNotifications extends State<TeacherLogHoursPage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget()),
+              : AppBarWidget(5)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherLogHoursPanelPage(),

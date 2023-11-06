@@ -1,3 +1,6 @@
+import 'package:cce_project/arguments/user_info_arguments.dart';
+import 'package:cce_project/services/authentication.dart';
+import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/styles.dart';
 import 'package:cce_project/views/teacherEditUser/teacher_edit_user_page.dart';
 import 'package:cce_project/views/teacherHourLogs/teacher_log_hours_page.dart';
@@ -36,9 +39,9 @@ List<ButtonsInfo> _buttonNames = [
   ButtonsInfo(title: "Statistics", icon: Icons.pie_chart_sharp),
   ButtonsInfo(title: "Timetable", icon: Icons.calendar_month_sharp),
   ButtonsInfo(title: "Log Hours", icon: Icons.access_time_outlined),
-  ButtonsInfo(title: "Edit user", icon: Icons.verified_user),
+  ButtonsInfo(title: "Edit User", icon: Icons.verified_user),
   ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
-  ButtonsInfo(title: "Log out", icon: Icons.logout_sharp),
+  ButtonsInfo(title: "Log Out", icon: Icons.logout_sharp),
 ];
 
 class SideMenu extends StatefulWidget {
@@ -101,11 +104,18 @@ class _SideMenu extends State<SideMenu> {
                             color: Colors.white,
                           ),
                         ),
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
                             _currentIndex = index;
                           });
-                          if (_buttonNames[index].title == "Settings") {
+                          if (_buttonNames[index].title == "Home") {
+                            User? currentUser = AuthService().currentUser;
+                            Map<dynamic, dynamic> userData =
+                              await FirestoreService(uid: currentUser!.uid)
+                                  .getData(currentUser.uid);
+                            Navigator.pushNamed(context, '/teacherDashboardPage',
+                              arguments: UserInfoArguments(currentUser.uid, userData["firstName"]));
+                          } else if (_buttonNames[index].title == "Settings") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -119,7 +129,7 @@ class _SideMenu extends State<SideMenu> {
                                   builder: (context) =>
                                       TeacherNotificationsPage()),
                             );
-                          } else if (_buttonNames[index].title == "Edit user") {
+                          } else if (_buttonNames[index].title == "Edit User") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -151,7 +161,7 @@ class _SideMenu extends State<SideMenu> {
                               MaterialPageRoute(
                                   builder: (context) => TeacherUsersPage()),
                             );
-                          } else if (_buttonNames[index].title == "Log out") {
+                          } else if (_buttonNames[index].title == "Log Out") {
                             FirebaseAuth.instance.signOut();
                             Navigator.pushNamed(context, '/loginPage');
                           }
