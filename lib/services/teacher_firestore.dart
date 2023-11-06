@@ -123,12 +123,31 @@ class TeacherFirestoreService {
 
     List<Map<String, dynamic>> logs = [];
 
+    Map<String, Map<String, dynamic>> userData = {};
+
+    // Ascertain that all async fetching of data is completed
+    List<Future<void>> futures = [];
+
     // Aggregate all data
     querySnapshot.docs.forEach((doc) {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       data['id'] = doc.id;
-      logs.add(data);
+      String uid = data['uid'];
+
+      // Retrieve user info only once
+      if (userData['uid'] == null) {
+        futures.add(collection.doc(uid).get().then((snapshot) {
+          userData[uid] = snapshot.data() as Map<String, dynamic>;
+          data = {...data, ...userData[uid]!};
+          logs.add(data);
+        }));
+      } else {
+        data = {...data, ...userData[uid]!};
+        logs.add(data);
+      }
     });
+
+    await Future.wait(futures);
 
     // Sort student names in order of date
     logs.sort((a, b) {
@@ -137,6 +156,8 @@ class TeacherFirestoreService {
 
       return d2.compareTo(d1);
     });
+
+    print(logs);
     return logs;
   }
 
