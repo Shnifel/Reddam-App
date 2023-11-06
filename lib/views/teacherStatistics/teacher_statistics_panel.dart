@@ -1,4 +1,6 @@
 import 'package:cce_project/services/firestore.dart';
+import 'package:cce_project/statistics/data_source.dart';
+import 'package:cce_project/statistics/get_leaderboard_data.dart';
 import 'package:cce_project/statistics/get_line_graph_data.dart';
 import 'package:cce_project/statistics/get_pie_chart_data.dart';
 import 'package:cce_project/statistics/graph_data.dart';
@@ -8,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dots_indicator/dots_indicator.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 class TeacherStatisticsPanelPage extends StatefulWidget {
   @override
@@ -21,11 +24,12 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
   FirestoreService firestoreService = FirestoreService(uid: FirebaseAuth.instance.currentUser!.uid);
 
   List allData = [];
-  int numberOfColorsYouWant = 0;
 
   List<List<LineData>> _LineChartData = [];
   List<PieData> _PieChartData = [];
   List<PieData> _ColumnChartData = [];
+  List<Student> _LeaderboardData = <Student>[];
+  late StudentDataSource _studentDataSource;
 
   void loadHours() async {
     firestoreService.getAllLogs().then((data) {
@@ -34,6 +38,8 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
         _LineChartData = GetLineGraphData(allData);
         _PieChartData = GetPieChartData(allData, "grade");
         _ColumnChartData = GetPieChartData(allData, "house");
+        _LeaderboardData = GetLeaderboardtData(allData);
+        _studentDataSource = StudentDataSource(students: _LeaderboardData);
         isLoading = false;
       });
     });
@@ -48,17 +54,22 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
     super.initState();
     isLoading = true;
     loadHours();
+    _studentDataSource = StudentDataSource(students: _LeaderboardData);
   }
 
   int _current = 0;
   final CarouselController _controller = CarouselController();
-  late TooltipBehavior _tooltipBehavior;
+  late TooltipBehavior _tooltipBehaviorLine;
+  late TooltipBehavior _tooltipBehaviorPie;
+  late TooltipBehavior _tooltipBehaviorBar;
 
   @override
   Widget build(BuildContext context) {
-    List<int> list = [1, 2, 3];
+    List<int> list = [1, 2, 3, 4];
     int year = DateTime.now().year;
-    _tooltipBehavior = TooltipBehavior(enable: true);
+    _tooltipBehaviorLine = TooltipBehavior(enable: true);
+    _tooltipBehaviorPie = TooltipBehavior(enable: true, format: 'Grade point.x : point.y hours');
+    _tooltipBehaviorBar = TooltipBehavior(enable: true, header: "", canShowMarker: false);
     return Scaffold(
       appBar: null,
       body: Column(
@@ -66,13 +77,14 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
           Expanded(
             child: CarouselSlider(
               items: [
+                // LINE GRAPH
                 Container(
                   height: MediaQuery.of(context).size.height,
                   child: Center(
                     child: !isLoading
                       ?SfCartesianChart(
                         title: ChartTitle(
-                          text: 'Total Community Service hours in $year',
+                          text: 'Total Community Service Hours in $year',
                           // Aligns the chart title to left
                           alignment: ChartAlignment.near,
                           textStyle: const TextStyle(
@@ -92,7 +104,7 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
                             secondaryColour,
                         ],
                         //Enables the tooltip for all the series
-                        tooltipBehavior: _tooltipBehavior,
+                        tooltipBehavior: _tooltipBehaviorLine,
                         //This allows us to not have to specify how many lines there will be
                         series: getLineSeries(_LineChartData),
                         primaryXAxis: DateTimeAxis(
@@ -106,11 +118,12 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
                       :const CircularProgressIndicator(color: primaryColour),
                   ),
                 ),
+                // PIE CHART
                 Container(
                   height: MediaQuery.of(context).size.height,
                   child: SfCircularChart(
                     title: ChartTitle(
-                      text: 'Total Community Service hours per grade in $year',
+                      text: 'Total Community Service Hours per Grade in $year',
                       // Aligns the chart title to the center
                       alignment: ChartAlignment.center,
                       textStyle: const TextStyle(
@@ -119,6 +132,8 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
                     ),
                     // Palette colors
                     palette: getColors(_PieChartData.length, primaryColour),
+                    //Enables the tooltip for all the series
+                    tooltipBehavior: _tooltipBehaviorPie,
                     legend: const Legend(
                       isVisible: true,
                       // Overflowing legend content will be wrapped
@@ -146,19 +161,20 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
                     ]
                   )
                 ),
+                // BAR GRAPH
                 Container(
                   height: MediaQuery.of(context).size.height,
                   child: SfCartesianChart(
                       title: ChartTitle(
-                        text: 'Total Community Service hours per house in $year',
+                        text: 'Total Community Service Hours per House in $year',
                         // Aligns the chart title to left
                         alignment: ChartAlignment.center,
                         textStyle: const TextStyle(
                           fontSize: 20,
                         )
                       ),
-                      // Palette colors
-                      palette: getColors(_ColumnChartData.length, secondaryColour),
+                      //Enables the tooltip for all the series
+                      tooltipBehavior: _tooltipBehaviorBar,
                       primaryXAxis: CategoryAxis(),
                       primaryYAxis: NumericAxis(),
                       series: <ChartSeries<PieData, String>>[
@@ -166,9 +182,68 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
                             dataSource: _ColumnChartData,
                             xValueMapper: (PieData data, _) => data.name,
                             yValueMapper: (PieData data, _) => data.hours,
+                            onCreateRenderer: (ChartSeries<PieData, String> series) {
+                              return _CustomColumnSeriesRenderer();
+                            },
+                            color: Colors.black
                           )
                       ]
                     )
+                ),
+                // LEADERBOARD
+                Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      child: Text("Student Leaderboard", style: TextStyle(fontSize: 25),),
+                    ),
+                    Expanded(
+                      child: SfDataGridTheme(
+                        data: SfDataGridThemeData(headerColor: secondaryColour),
+                        child: SfDataGrid(
+                          columnWidthMode: ColumnWidthMode.fill,
+                          source: _studentDataSource,
+                          columns: [
+                            GridColumn(
+                                columnName: 'firstName',
+                                label: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      'First Name',
+                                      overflow: TextOverflow.ellipsis,
+                                    ))),
+                            GridColumn(
+                                columnName: 'lastName',
+                                label: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      'Last Name',
+                                      overflow: TextOverflow.ellipsis,
+                                    ))),
+                            GridColumn(
+                                columnName: 'grade',
+                                label: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      'Grade',
+                                      overflow: TextOverflow.ellipsis,
+                                    ))),
+                            GridColumn(
+                                columnName: 'total',
+                                label: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      'Total Hours',
+                                      overflow: TextOverflow.ellipsis,
+                                    ))),
+                          ],
+                      )),
+                    ),
+                  ],
                 ),
               ],
               carouselController: _controller,
@@ -238,4 +313,40 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
     return c;
   }
 
+}
+
+class _ColumnCustomPainter extends ColumnSegment {
+  @override
+  int get currentSegmentIndex => super.currentSegmentIndex!;
+
+  @override
+   void onPaint(Canvas canvas) {
+     final List<LinearGradient> gradientList = <LinearGradient>[
+       const LinearGradient(
+         colors: <Color>[Color.fromRGBO(59,98,125,1), Color.fromRGBO(59,98,125,1)],
+       ),
+       const LinearGradient(
+         colors: <Color>[Color.fromRGBO(1,92,67,1), Color.fromRGBO(1,92,67,1)],
+       ),
+       const LinearGradient(
+         colors: <Color>[Color.fromRGBO(124,44,119, 1), Color.fromRGBO(124,44,119, 1)],
+       ),
+       const LinearGradient(
+         colors: <Color>[Color.fromRGBO(141,1,38,1), Color.fromRGBO(141,1,38,1)],
+       ),
+    ];
+ 
+    fillPaint!.shader =
+        gradientList[currentSegmentIndex].createShader(segmentRect.outerRect);
+    
+    super.onPaint(canvas);
+   }
+}
+
+class _CustomColumnSeriesRenderer extends ColumnSeriesRenderer {
+  _CustomColumnSeriesRenderer();
+  @override
+  ChartSegment createSegment() {
+    return _ColumnCustomPainter();
+  }
 }
