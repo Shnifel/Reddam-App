@@ -172,17 +172,18 @@ class FirestoreService {
         .get()
         .then(
       (querySnapshot) async {
+        QuerySnapshot users = await getUserInfo();
         for (var docSnapshot in querySnapshot.docs) {
           Map<String, dynamic> data = docSnapshot.data();
-          await getUserInfo(data["uid"]).then((d) {
-            Map<String, dynamic> userData = d;
-            data["grade"] = userData["grade"];
-            data["class"] = userData["class"];
-            data["house"] = userData["house"];
-          });
+          // Get the user with the specified uid
+          Map<String, dynamic>? user = users.docs.firstWhere((element) => element.id == data["uid"]).data() as Map<String, dynamic>?;
+          // Add the grade, class, and house to each log
+          data["grade"] = user!["grade"];
+          data["class"] = user["class"];
+          data["house"] = user["house"];
           allData.add(data);
-          hours[data['hours_type']] =
-              hours[data['hours_type']]! + data['amount'];
+          // hours[data['hours_type']] =
+          //     hours[data['hours_type']]! + data['amount'];
         }
       },
       onError: (e) => print("Error completing: $e"),
@@ -191,18 +192,10 @@ class FirestoreService {
     return allData;
   }
 
-  Future<Map<String, dynamic>> getUserInfo(uid) async {
+  Future<QuerySnapshot> getUserInfo() async {
     var db = FirebaseFirestore.instance;
 
-    Map<String, dynamic> userData = {};
-
-    await db.collection("Users").doc(uid).get().then(
-      (DocumentSnapshot doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        userData = data;
-      },
-      onError: (e) => print("Error completing: $e"),
-    );
+    QuerySnapshot userData = await db.collection("Users").get();
 
     return userData;
   }
