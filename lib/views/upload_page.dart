@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cce_project/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -83,11 +84,10 @@ class _ImageUploadsState extends State<ImageUploads> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Column(
         children: <Widget>[
           const SizedBox(
-            height: 32,
+            height: 50,
           ),
           Center(
             child: GestureDetector(
@@ -96,7 +96,7 @@ class _ImageUploadsState extends State<ImageUploads> {
               },
               child: CircleAvatar(
                 radius: 55,
-                backgroundColor: const Color(0xffFDCF09),
+                backgroundColor: secondaryColour,
                 child: _photo != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(50),
@@ -109,7 +109,7 @@ class _ImageUploadsState extends State<ImageUploads> {
                       )
                     : Container(
                         decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(50)),
                         width: 100,
                         height: 100,

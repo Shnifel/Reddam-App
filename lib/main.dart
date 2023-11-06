@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Kollektif',
+        scaffoldBackgroundColor: Colors.white, 
       ),
       home: const LoginPage(),
       // Named routes in the app

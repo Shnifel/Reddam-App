@@ -89,6 +89,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
   Widget build(BuildContext context) {
     //bottom nav
     BottomNavigationBar bottomNavigationBar = BottomNavigationBar(
+      backgroundColor: Colors.teal,
       selectedItemColor: primaryColour,
       unselectedItemColor: primaryColour.withOpacity(0.4),
       elevation: 0,
