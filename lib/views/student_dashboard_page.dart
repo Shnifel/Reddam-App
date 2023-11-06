@@ -1,6 +1,7 @@
 import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/student_home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
@@ -8,7 +9,6 @@ import 'package:cce_project/my_icons_icons.dart';
 import 'upload_page.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StudentDashboardPage extends StatelessWidget {
   const StudentDashboardPage({super.key});
@@ -19,14 +19,10 @@ class StudentDashboardPage extends StatelessWidget {
     UserInfoArguments arguments = ModalRoute.of(context)!.settings.arguments as UserInfoArguments;
     String userID = arguments.userID;
     String name = arguments.name;
-    String goal = 'Full Colours';
-    int goalHours = 150;
-    int activeHours = 50;
-    int passiveHours = 30;
 
     return Scaffold(
       //The body is filled with the StudentDashboard class below
-      body: StudentDashboard(userID, name, goal, goalHours, activeHours, passiveHours),
+      body: StudentDashboard(userID, name),
     );
   }
 }
@@ -36,23 +32,15 @@ class StudentDashboard extends StatefulWidget {
   //We have to initialise the variables
   String userID = '';
   String name = '';
-  String goal = '';
-  int goalHours = 0;
-  int activeHours = 0;
-  int passiveHours = 0;
 
   //Constructor
-  StudentDashboard(String passedUserID, String passedName, String passedGoal, int passedGoalHours, int passedActiveHours, int passedPassiveHours, {super.key}) {
+  StudentDashboard(String passedUserID, String passedName, {super.key}) {
     userID = passedUserID;
     name = passedName;
-    goal = passedGoal;
-    goalHours = passedGoalHours;
-    activeHours = passedActiveHours;
-    passiveHours = passedPassiveHours;
   }
 
   @override
-  State<StudentDashboard> createState() => _StudentDashboardState(userID, name, goal, goalHours, activeHours, passiveHours);
+  State<StudentDashboard> createState() => _StudentDashboardState(userID, name);
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
@@ -60,11 +48,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
   //We have to initialise the variable before getting it from the constructor
   String userID = '';
   String name = '';
-  String goal = '';
-  int goalHours = 0;
-  int activeHours = 0;
-  int passiveHours = 0;
-  List<Segment> segments = [];
   DateTime today=DateTime.now();
  // String currentday=today.toString().split(" ")[0];
 
@@ -84,18 +67,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }
 
   //Constructor
-  _StudentDashboardState(String passedUserID, String passedName, String passedGoal, int passedGoalHours, int passedActiveHours, int passedPassiveHours) {
+  _StudentDashboardState(String passedUserID, String passedName) {
     userID = passedUserID;
     name = passedName;
-    goal = passedGoal;
-    goalHours = passedGoalHours;
-    activeHours = passedActiveHours;
-    passiveHours = passedPassiveHours;
-    
-    segments = [
-      Segment(value: passiveHours, color: primaryColour, label: const Text("Passive Hours")),
-      Segment(value: activeHours, color: secondaryColour, label: const Text("Active Hours")),
-    ];
   }
 
   // String name = '';
@@ -113,16 +87,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   @override
   Widget build(BuildContext context) {
-
-    // Hours progress bar
-    PrimerProgressBar progressBar = PrimerProgressBar(
-      segments: segments,
-      // Set the maximum number of hours for the bar
-      maxTotalValue: goalHours,
-      // Spacing between legend items
-      legendStyle: const SegmentedBarLegendStyle(spacing: 80),
-    );
-
     //bottom nav
     BottomNavigationBar bottomNavigationBar = BottomNavigationBar(
       selectedItemColor: primaryColour,
@@ -185,101 +149,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     List<Widget> screens = [ //moving between screens
 
-    //home screen
-        Container(
-        color: Color(0xfffffff2),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 75, 20, 10),
-              child: Column(
-                // Add spacing between column elements
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  // Students name
-                  Row(
-                    children: [
-                      FittedBox(
-                          // This ensures that the student's name is resized to fit the screen
-                          fit: BoxFit.cover,
-                          child: Text("Hi, $name!",
-                              style: loginPageText.copyWith(
-                                  fontSize: 35, fontWeight: FontWeight.bold))),
-                    ],
-                  ),
-
-                  // Reddam Crest
-                  SizedBox(
-                    height: 350,
-                    width: 200,
-                    child:
-                        Image.asset("assets/images/ReddamHouseCrest.svg.png"),
-                  ),
-
-                  //goal
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text("You are currently working towards:",
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
-                          )),
-
-                      // Current objective
-                      Text(
-                        goal,
-                        style: TextStyle(
-                          color: primaryColour,
-                          fontSize: 23,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 15),
-
-                  //progress
-                  Container(
-                    decoration: BoxDecoration(
-                        color: secondaryColour.withOpacity(0.1),
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 25),
-                      child: Column(children: <Widget>[
-                        // Active hour percentage
-                        Container(
-                          width: 150,
-                          height: 150,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 2,
-                              color: secondaryColour,
-                            ),
-                          ),
-                          child: Text(
-                              "${(activeHours / 1.5).round()}% \n Active",
-                              style: loginPageText,
-                              textAlign: TextAlign.center),
-                        ),
-
-                        SizedBox(height: 15),
-
-                        // Progress bar
-                        Container(
-                          child: progressBar,
-                        ),
-                      ]),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      //home screen
+      StudentHomePage(name),
 
       //hours
       Center(
@@ -298,46 +169,27 @@ class _StudentDashboardState extends State<StudentDashboard> {
       Padding(
         padding: const EdgeInsets.only(top: 40.0),
         child: Center(
-
-
-    child: Column(
-    children: <Widget>[
-
-
-
-    TableCalendar(rowHeight: 75,
-          headerStyle: HeaderStyle(formatButtonVisible: false,titleCentered: true),
-          availableGestures: AvailableGestures.all,
-          selectedDayPredicate: (day)=> isSameDay(day,today),
-          focusedDay:today,
-          firstDay: DateTime.utc(2023,09,20),
-          lastDay: DateTime.utc(2030,12,31),
-         onDaySelected: _onDaySelected,
-
-    ),
-
-
-    ],
-
-    ),
-    ),
+          child: Column(
+            children: <Widget>[
+              TableCalendar(
+                rowHeight: 75,
+                headerStyle: HeaderStyle(formatButtonVisible: false,titleCentered: true),
+                availableGestures: AvailableGestures.all,
+                selectedDayPredicate: (day)=> isSameDay(day,today),
+                focusedDay:today,
+                firstDay: DateTime.utc(2023,09,20),
+                lastDay: DateTime.utc(2030,12,31),
+                onDaySelected: _onDaySelected,
+              ),
+            ],
+          ),
+        ),
       )
     ];
 
-
-
     return Scaffold(
       body: screens[currentIndex],
-      extendBody: true,
-
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          // sets the background color of the `BottomNavigationBar`
-          canvasColor: Colors.transparent,
-        ), // sets the inactive color of the `BottomNavigationBar`
-        child: bottomNavigationBar,
-      ),
+      bottomNavigationBar: bottomNavigationBar,
     );
-
   }
 }
