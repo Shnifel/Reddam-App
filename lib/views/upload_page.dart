@@ -87,7 +87,7 @@ class _ImageUploadsState extends State<ImageUploads> {
       body: Column(
         children: <Widget>[
           const SizedBox(
-            height: 50,
+            height: 60,
           ),
           Center(
             child: GestureDetector(
@@ -114,8 +114,10 @@ class _ImageUploadsState extends State<ImageUploads> {
                         width: 100,
                         height: 100,
                         child: Icon(
-                          Icons.camera_alt,
+                          Icons.add_a_photo_outlined,
                           color: Colors.grey[800],
+                          size: 40,
+                          weight: 1,
                         ),
                       ),
               ),
