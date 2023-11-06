@@ -181,6 +181,9 @@ class FirestoreService {
           data["grade"] = user!["grade"];
           data["class"] = user["class"];
           data["house"] = user["house"];
+          data["house"] = user["house"];
+          data["firstName"] = user["firstName"];
+          data["lastName"] = user["lastName"];
           allData.add(data);
           // hours[data['hours_type']] =
           //     hours[data['hours_type']]! + data['amount'];
