@@ -33,6 +33,7 @@ class _HoursHistoryPageState extends State<HoursHistoryPage> {
     firestoreService.getStudentLogs(filters: filters).then((data) {
       setState(() {
         hours = data;
+        print(data);
         isLoading = false;
       });
       if (widget.focus != null) {

@@ -54,6 +54,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Kollektif',
+        dividerColor:
+            Colors.transparent, // Set the divider color to transparent
         scaffoldBackgroundColor: Colors.white, 
       ),
       home: const WelcomePage(),

@@ -61,7 +61,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
     Segment(
         value: 54,
         color: secondaryColour,
-        label: const Text("Tecaher stuff 2")),
+        label: const Text("Teacher stuff 2")),
   ];
 
   @override
@@ -72,7 +72,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget()),
+              : AppBarWidget(0)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: PanelCenterPage(),

@@ -28,7 +28,7 @@ class _TeacherSubmissions extends State<TeacherSubmissionsPage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget()),
+              : AppBarWidget(0)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherSubmissionsPanelPage(),

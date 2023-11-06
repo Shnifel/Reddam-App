@@ -28,7 +28,7 @@ class _TeacherEdit extends State<TeacherEditPage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget()),
+              : AppBarWidget(6)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherEditUsersPanelPage(),

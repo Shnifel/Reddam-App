@@ -2,15 +2,23 @@ import 'package:cce_project/styles.dart';
 import 'package:cce_project/views/responsive_layout.dart';
 import 'package:flutter/material.dart';
 
-List<String> _buttonNames = ["Dashboard"];
-int _currentSelectedButton = 0;
+List<String> _buttonNames = ["Home", "Settings", "Notifications", "Statistics", "Timetable", "Log Hours", "Edit User", "Users", "Logout"];
+int _currentSelectedButton2 = 0;
 
 class AppBarWidget extends StatefulWidget {
+  final int _currentSelectedButton;
+
+  AppBarWidget(this._currentSelectedButton);
+
   @override
-  _AppBarWidgetState createState() => _AppBarWidgetState();
+  _AppBarWidgetState createState() => _AppBarWidgetState(_currentSelectedButton);
 }
 
 class _AppBarWidgetState extends State<AppBarWidget> {
+  final int _currentSelectedButton;
+
+  _AppBarWidgetState(this._currentSelectedButton);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,9 +27,9 @@ class _AppBarWidgetState extends State<AppBarWidget> {
         children: [
           if (ResponsiveLayout.isComputer(context))
             Container(
-              margin: EdgeInsets.all(10.0),
+              margin: const EdgeInsets.all(10.0),
               height: double.infinity,
-              decoration: BoxDecoration(boxShadow: [
+              decoration: const BoxDecoration(boxShadow: [
                 BoxShadow(
                   color: Colors.black45,
                   offset: Offset(0, 0),
@@ -29,7 +37,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   blurRadius: 10,
                 )
               ], shape: BoxShape.circle),
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 backgroundColor: primaryColour,
                 radius: 30,
                 //child: Image.asset("assets/images/ReddamHouseLogo.svg.png"),
@@ -43,7 +51,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
             ),
           SizedBox(width: 10.0),
           if (ResponsiveLayout.isComputer(context))
@@ -64,7 +72,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
               (index) => TextButton(
                 onPressed: () {
                   setState(() {
-                    _currentSelectedButton = index;
+                    _currentSelectedButton2 = index;
                   });
                 },
                 child: Padding(
@@ -76,7 +84,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       Text(
                         _buttonNames[index],
                         style: TextStyle(
-                          color: _currentSelectedButton == index
+                          color: _currentSelectedButton2 == index
                               ? Colors.white
                               : Colors.white70,
                         ),
@@ -86,8 +94,8 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                         width: 60,
                         height: 2,
                         decoration: BoxDecoration(
-                          gradient: _currentSelectedButton == index
-                              ? LinearGradient(
+                          gradient: _currentSelectedButton2 == index
+                              ? const LinearGradient(
                                   colors: [
                                     Colors.red,
                                     Colors.orange,
@@ -110,7 +118,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                 children: [
                   Text(
                     _buttonNames[_currentSelectedButton],
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20
                     ),
@@ -119,20 +127,20 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     margin: EdgeInsets.all(10.0 / 2),
                     width: 60,
                     height: 2,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: secondaryColour,
                     ),
                   ),
                 ],
               ),
             ),
-          Spacer(),
+          const Spacer(),
           IconButton(
             padding: const EdgeInsets.only(top: 60),
             color: Colors.white,
             iconSize: 30,
             onPressed: () {},
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
           ),
           Stack(
             children: [
@@ -141,7 +149,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                 color: Colors.white,
                 iconSize: 30,
                 onPressed: () {},
-                icon: Icon(Icons.notifications_none_outlined),
+                icon: const Icon(Icons.notifications_none_outlined),
               ),
               // Positioned(
               //   right: 10,
@@ -159,9 +167,9 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           ),
           if (!ResponsiveLayout.isPhone(context))
             Container(
-              margin: EdgeInsets.all(10.0),
+              margin: const EdgeInsets.all(10.0),
               height: double.infinity,
-              decoration: BoxDecoration(boxShadow: [
+              decoration: const BoxDecoration(boxShadow: [
                 BoxShadow(
                   color: Colors.black45,
                   offset: Offset(0, 0),
@@ -169,7 +177,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   blurRadius: 10,
                 )
               ], shape: BoxShape.circle),
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 backgroundColor: Colors.orange,
                 radius: 30,
               ),

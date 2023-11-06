@@ -28,7 +28,7 @@ class _TeacherSettings extends State<TeacherSettingsPage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget()),
+              : AppBarWidget(1)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherSettingsPanelPage(),
