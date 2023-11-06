@@ -59,6 +59,7 @@ class _SignUpFormState extends State<SignUpForm> {
         child: Form(
             key: _formKey,
             child: ListView(
+              scrollDirection: Axis.vertical,
               children: <Widget>[
                 Container(
                     alignment: Alignment.centerLeft,
