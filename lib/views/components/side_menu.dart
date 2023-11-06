@@ -8,6 +8,7 @@ import 'package:cce_project/views/teacherSubmissions/teacher_submissions_page.da
 import 'package:cce_project/views/teacherTimetable/teacher_timetable_page.dart';
 import 'package:cce_project/views/teacherUsers/teacher_users_page.dart';
 import 'package:cce_project/views/teacher_dashboard_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cce_project/views/responsive_layout.dart';
 
@@ -37,6 +38,7 @@ List<ButtonsInfo> _buttonNames = [
   ButtonsInfo(title: "Log Hours", icon: Icons.access_time_outlined),
   ButtonsInfo(title: "Edit user", icon: Icons.verified_user),
   ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
+  ButtonsInfo(title: "Log out", icon: Icons.logout_sharp),
 ];
 
 class SideMenu extends StatefulWidget {
@@ -149,6 +151,9 @@ class _SideMenu extends State<SideMenu> {
                               MaterialPageRoute(
                                   builder: (context) => TeacherUsersPage()),
                             );
+                          } else if (_buttonNames[index].title == "Log out") {
+                            FirebaseAuth.instance.signOut();
+                            Navigator.pushNamed(context, '/loginPage');
                           }
                         },
                         shape: RoundedRectangleBorder(

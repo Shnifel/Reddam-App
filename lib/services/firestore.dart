@@ -103,7 +103,7 @@ class FirestoreService {
   Future<Map<String, Object?>> aggregateHours(
       {Map<String, Object?> filters = const {}}) async {
     Query<Object?> query = hoursCollection;
-    query.where('uid', isEqualTo: uid);
+    query = query.where('uid', isEqualTo: uid);
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
 
@@ -122,7 +122,7 @@ class FirestoreService {
   Future<List<Map<String, dynamic>>> getStudentLogs(
       {Map<String, Object?> filters = const {}}) async {
     Query query = hoursCollection;
-    query.where('uid', isEqualTo: uid);
+    query = query.where('uid', isEqualTo: uid);
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
 

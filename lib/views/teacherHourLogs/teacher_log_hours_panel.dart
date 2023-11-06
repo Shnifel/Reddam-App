@@ -78,12 +78,13 @@ class _TeacherLogHoursPanelPageState extends State<TeacherLogHoursPanelPage> {
   }
 
   void filterSearchResults(String query) {
-    filteredList = studentList
-        .where((item) => (item['firstName'] + item['lastName'])
-            .toLowerCase()
-            .contains(query.toLowerCase()))
-        .toList();
-    setState(() {});
+    setState(() {
+      filteredList = studentList
+          .where((item) => (item['firstName'] + item['lastName'])
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+    });
   }
 
   // Submit handler
@@ -542,13 +543,16 @@ class _TeacherLogHoursPanelPageState extends State<TeacherLogHoursPanelPage> {
                     else
                       Column(
                         children: filteredList
-                            .map((student) =>
-                                StudentDataRow(student['isSelected'], student,
-                                    (isSelected) {
-                                  setState(() {
-                                    student['isSelected'] = isSelected;
-                                  });
-                                }))
+                            .map((student) => StudentDataRow(
+                                  student['isSelected'],
+                                  student,
+                                  (isSelected) {
+                                    setState(() {
+                                      student['isSelected'] = isSelected;
+                                    });
+                                  },
+                                  key: Key(student['id']),
+                                ))
                             .toList(),
                       ),
 
