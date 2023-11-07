@@ -2,7 +2,7 @@ import 'package:cce_project/styles.dart';
 import 'package:cce_project/views/responsive_layout.dart';
 import 'package:flutter/material.dart';
 
-List<String> _buttonNames = ["Home", "Settings", "Notifications", "Statistics", "Timetable", "Log Hours", "Edit User", "Users", "Logout"];
+List<String> _buttonNames = ["Home", "Settings", "Notifications", "Statistics", "Timetable", "Log Hours", "Approve Teachers", "Users", "Logout"];
 int _currentSelectedButton2 = 0;
 
 class AppBarWidget extends StatefulWidget {
