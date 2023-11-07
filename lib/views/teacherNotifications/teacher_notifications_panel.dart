@@ -1,5 +1,7 @@
 import 'package:cce_project/services/teacher_firestore.dart';
+import 'package:cce_project/services/teacher_firestore.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/teacherNotifications/student_log.dart';
 import 'package:cce_project/views/teacherNotifications/student_log.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +17,9 @@ class _TeacherNotificationsPanelPageState
   bool _isLoading = true;
 
   void loadStudentLogs() async {
+    setState(() {
+      _isLoading = true;
+    });
     await TeacherFirestoreService()
         .getStudentLogs(filters: {'validated': false}).then((data) => setState(
               () {
@@ -22,6 +27,10 @@ class _TeacherNotificationsPanelPageState
                 _isLoading = false;
               },
             ));
+  }
+
+  void onValidateComplete() {
+    loadStudentLogs();
   }
 
   @override
@@ -38,7 +47,7 @@ class _TeacherNotificationsPanelPageState
             ? CircularProgressIndicator()
             : ListView(
                 children: _studentLogs
-                    .map((log) => StudentHoursLog(log, () {}))
+                    .map((log) => StudentHoursLog(log, onValidateComplete))
                     .toList()));
   }
 }

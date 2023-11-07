@@ -61,7 +61,9 @@ class TeacherFirestoreService {
 
   Future<Map<String, Map<String, dynamic>>> aggregateHours(
       {Map<String, Object?> filters = const {},
-      List<String> users = const []}) async {
+      List<String> users = const [],
+      bool splitTimeCollection = false,
+      bool formatAsString = false}) async {
     Query<Object?> query = hoursCollection;
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
@@ -69,10 +71,16 @@ class TeacherFirestoreService {
 
     QuerySnapshot querySnapshot = await query.get();
 
-    Map<String, Map<String, double>> aggregatedHours = {};
+    Map<String, Map<String, dynamic>> aggregatedHours = {};
 
     for (var user in users) {
-      Map<String, double> hours = {'Active': 0, 'Passive': 0};
+      Map<String, double> hours;
+      if (splitTimeCollection) {
+        hours = {'Active Time': 0, 'Active Collection': 0, 'Passive': 0};
+      } else {
+        hours = {'Active': 0, 'Passive': 0};
+      }
+
       aggregatedHours[user] = hours;
     }
 
@@ -80,9 +88,34 @@ class TeacherFirestoreService {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       String uid = data['uid'];
       String hours_type = data['hours_type'];
+      if (hours_type == "Active" && splitTimeCollection) {
+        // ignore: prefer_interpolation_to_compose_strings
+        hours_type += " " + data['activity'];
+      }
       aggregatedHours[uid]![hours_type] =
           aggregatedHours[uid]![hours_type]! + data['amount'];
     });
+
+    for (var user in users) {
+      if (splitTimeCollection) {
+        aggregatedHours[user]!['Total'] =
+            aggregatedHours[user]!['Active Time']! +
+                aggregatedHours[user]!['Active Collection']! +
+                aggregatedHours[user]!['Passive']!;
+      } else {
+        aggregatedHours[user]!['Total'] = aggregatedHours[user]!['Active']! +
+            aggregatedHours[user]!['Passive']!;
+      }
+
+      if (formatAsString) {
+        Map<String, dynamic> stringFormatted = {};
+        for (var key in aggregatedHours[user]!.keys) {
+          stringFormatted[key] =
+              (aggregatedHours[user]![key] as double).toString();
+        }
+        aggregatedHours[user] = stringFormatted;
+      }
+    }
 
     return aggregatedHours;
   }
@@ -163,16 +196,18 @@ class TeacherFirestoreService {
 
   // Approve/reject hours for students
   Future<void> validateHours(String hoursID, String uid, bool accepted,
-      {String? rejectionMessage = null}) async {
+      {bool sendNotification = false, String? rejectionMessage = null}) async {
     await hoursCollection.doc(hoursID).update({
       "validated": true,
       "accepted": accepted,
       "rejection_message": rejectionMessage
     });
 
-    NotificationServices.sendNotification(
-        uid, "Hours approval status updated", "",
-        id: hoursID, notificationType: "HOURS");
+    if (sendNotification) {
+      NotificationServices.sendNotification(
+          uid, "Hours approval status updated", "",
+          id: hoursID, notificationType: "HOURS");
+    }
   }
 
   // Log hours in a batch for a list of students

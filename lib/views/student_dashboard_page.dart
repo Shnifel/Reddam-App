@@ -181,7 +181,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 String.fromCharCode(MyIcons.home_unfilled.codePoint),
                 style: TextStyle(
                   inherit: false,
-                  fontSize: 20.0,
+                  fontSize: 25.0,
                   color: primaryColour.withOpacity(0.4),
                   fontWeight: FontWeight.bold,
                   fontFamily: MyIcons.home_unfilled.fontFamily,
@@ -240,16 +240,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   // Students name
-                  Row(
-                    children: [
-                      FittedBox(
-                          // This ensures that the student's name is resized to fit the screen
-                          fit: BoxFit.cover,
-                          child: Text("Hi, $name!",
-                              style: loginPageText.copyWith(
-                                  fontSize: 35, fontWeight: FontWeight.bold))),
-                    ],
-                  ),
+
+                  SingleChildScrollView(
+                      // This ensures that the student's name is resized to fit the screen
+                      child: Text("Hi, $name!",
+                          style: loginPageText.copyWith(
+                              fontSize: 35, fontWeight: FontWeight.bold))),
 
                   // Reddam Crest
                   SizedBox(
@@ -380,6 +376,5 @@ class _StudentDashboardState extends State<StudentDashboard> {
         child: bottomNavigationBar,
       ),
     );
-
   }
 }

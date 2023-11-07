@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/authentication.dart';
 import 'package:cce_project/services/firestore.dart';
@@ -41,8 +43,11 @@ class WelcomePage extends StatelessWidget {
                                 currentUser.uid, userData["firstName"]));
                       } else {
                         Navigator.pushNamed(context, '/studentDashboardPage',
-                            arguments:
-                                UserInfoArguments(currentUser.uid, "Test"));
+                            arguments: UserInfoArguments(
+                                currentUser.uid,
+                                userData["firstName"] +
+                                    " " +
+                                    userData["lastName"]));
                       }
                     }
                   },
