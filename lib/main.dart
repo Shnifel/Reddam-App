@@ -54,9 +54,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Kollektif',
-        scaffoldBackgroundColor: Colors.white, 
+        dividerColor:
+            Colors.transparent, // Set the divider color to transparent
       ),
-      home: const LoginPage(),
+      home: const WelcomePage(),
       // Named routes in the app
       routes: {
         '/loginPage': (context) => const LoginPage(),

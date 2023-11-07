@@ -56,7 +56,7 @@ class _HoursCardState extends State<HoursCard> {
                         children: [
                           Text(
                             widget.header,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 14,
                                 color: primaryColour,
                                 fontWeight: FontWeight.bold),
