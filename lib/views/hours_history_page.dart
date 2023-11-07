@@ -55,7 +55,7 @@ class _HoursHistoryPageState extends State<HoursHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? const CircularProgressIndicator()
+        ? const CircularProgressIndicator(color: primaryColour)
         : Padding(
             padding: const EdgeInsets.all(0),
             child: ListView(

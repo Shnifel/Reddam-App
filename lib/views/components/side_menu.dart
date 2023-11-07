@@ -40,9 +40,9 @@ List<ButtonsInfo> _buttonNames = [
   ButtonsInfo(title: "Statistics", icon: Icons.pie_chart_sharp),
   ButtonsInfo(title: "Timetable", icon: Icons.calendar_month_sharp),
   ButtonsInfo(title: "Log Hours", icon: Icons.access_time_outlined),
-  ButtonsInfo(title: "Edit User", icon: Icons.verified_user),
+  ButtonsInfo(title: "Approve Teachers", icon: Icons.verified_user),
   ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
-  ButtonsInfo(title: "Hours summary", icon: Icons.share),
+  ButtonsInfo(title: "Hours Summary", icon: Icons.share),
   ButtonsInfo(title: "Log Out", icon: Icons.logout_sharp),
 ];
 
@@ -133,7 +133,7 @@ class _SideMenu extends State<SideMenu> {
                                   builder: (context) =>
                                       TeacherNotificationsPage()),
                             );
-                          } else if (_buttonNames[index].title == "Edit User") {
+                          } else if (_buttonNames[index].title == "Approve Teachers") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -166,7 +166,7 @@ class _SideMenu extends State<SideMenu> {
                                   builder: (context) => TeacherUsersPage()),
                             );
                           } else if (_buttonNames[index].title ==
-                              "Hours summary") {
+                              "Hours Summary") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(

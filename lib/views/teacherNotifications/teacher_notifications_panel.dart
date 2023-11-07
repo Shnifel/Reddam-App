@@ -44,7 +44,7 @@ class _TeacherNotificationsPanelPageState
     return Scaffold(
         backgroundColor: Colors.white,
         body: _isLoading
-            ? CircularProgressIndicator()
+            ? const Center(child: CircularProgressIndicator(color: primaryColour))
             : ListView(
                 children: _studentLogs
                     .map((log) => StudentHoursLog(log, onValidateComplete))

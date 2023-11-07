@@ -605,7 +605,7 @@ class _LogHoursFormState extends State<LogHoursForm> {
                                   width: 10,
                                 ),
                                 if (_isLoading)
-                                  const CircularProgressIndicator()
+                                  const CircularProgressIndicator(color: primaryColour)
                               ])),
                     ),
                   ],

@@ -580,7 +580,7 @@ class _TeacherLogHoursPanelPageState extends State<TeacherLogHoursPanelPage> {
                                   width: 10,
                                 ),
                                 if (_submitLoading)
-                                  const CircularProgressIndicator()
+                                  const CircularProgressIndicator(color: primaryColour)
                               ])),
                     ),
                   ],

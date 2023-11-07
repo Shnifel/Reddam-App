@@ -9,9 +9,9 @@ List<String> _buttonNames = [
   "Statistics",
   "Timetable",
   "Log Hours",
-  "Edit User",
+  "Approve Teachers",
   "Users",
-  "Hours summary",
+  "Hours Summary",
   "Logout"
 ];
 int _currentSelectedButton2 = 0;

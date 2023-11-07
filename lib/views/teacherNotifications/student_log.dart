@@ -186,7 +186,7 @@ class _StudentHoursLogState extends State<StudentHoursLog> {
                                                       loadingProgress) =>
                                                   (loadingProgress == null)
                                                       ? child
-                                                      : const CircularProgressIndicator(),
+                                                      : const CircularProgressIndicator(color: primaryColour),
                                               errorBuilder: (context, error,
                                                       stackTrace) =>
                                                   const Center(

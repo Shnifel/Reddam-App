@@ -119,7 +119,7 @@ class _HoursLogInfoState extends State<HoursLogInfo> {
                                         loadingProgress) =>
                                     (loadingProgress == null)
                                         ? child
-                                        : CircularProgressIndicator(),
+                                        : CircularProgressIndicator(color: primaryColour),
                                 errorBuilder: (context, error, stackTrace) =>
                                     Center(child: Text("Image not found")),
                                 width: 100,

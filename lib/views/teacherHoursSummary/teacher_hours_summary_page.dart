@@ -29,7 +29,7 @@ class _TeacherEdit extends State<TeacherHoursSummaryPage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget(6)),
+              : AppBarWidget(8)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherHoursSummaryPanelPage(),
