@@ -1,6 +1,8 @@
 import 'package:cce_project/services/badge_notifier.dart';
 import 'package:cce_project/services/database.dart';
 import 'package:cce_project/views/hours_log_page.dart';
+import 'package:cce_project/views/not_verified_page.dart';
+import 'package:cce_project/views/signup_page_teacher.dart';
 import 'package:cce_project/views/teacherSettings/teacher_settings_page.dart';
 import 'package:cce_project/views/teacherSettings/teacher_settings_panel.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -63,9 +65,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/loginPage': (context) => const LoginPage(),
         '/signupPage': (context) => const SignUpPage(),
+        '/signupPageTeacher': (context) => const SignUpPageTeacher(),
         '/studentDashboardPage': (context) => const StudentDashboardPage(),
         '/teacherDashboardPage': (context) => const TeacherDashboardPage(),
         '/teacherSettingsPage': (context) => const TeacherSettingsPage(),
+        '/notVerifiedPage': (context) => const NotVerifiedPage(),
       },
     );
   }

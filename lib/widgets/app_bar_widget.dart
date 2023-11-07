@@ -9,7 +9,7 @@ List<String> _buttonNames = [
   "Statistics",
   "Timetable",
   "Log Hours",
-  "Approve Teachers",
+  "Verify Teachers",
   "Users",
   "Hours Summary",
   "Logout"

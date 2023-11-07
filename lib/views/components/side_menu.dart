@@ -2,7 +2,7 @@ import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/authentication.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/styles.dart';
-import 'package:cce_project/views/teacherEditUser/teacher_edit_user_page.dart';
+import 'package:cce_project/views/teacherVerifyTeachers/teacher_verify_teachers_page.dart';
 import 'package:cce_project/views/teacherHourLogs/teacher_log_hours_page.dart';
 import 'package:cce_project/views/teacherHoursSummary/teacher_hours_summary_page.dart';
 import 'package:cce_project/views/teacherNotifications/teacher_notifications_page.dart';
@@ -40,7 +40,7 @@ List<ButtonsInfo> _buttonNames = [
   ButtonsInfo(title: "Statistics", icon: Icons.pie_chart_sharp),
   ButtonsInfo(title: "Timetable", icon: Icons.calendar_month_sharp),
   ButtonsInfo(title: "Log Hours", icon: Icons.access_time_outlined),
-  ButtonsInfo(title: "Approve Teachers", icon: Icons.verified_user),
+  ButtonsInfo(title: "Verify Teachers", icon: Icons.verified_user),
   ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
   ButtonsInfo(title: "Hours Summary", icon: Icons.share),
   ButtonsInfo(title: "Log Out", icon: Icons.logout_sharp),
@@ -133,11 +133,11 @@ class _SideMenu extends State<SideMenu> {
                                   builder: (context) =>
                                       TeacherNotificationsPage()),
                             );
-                          } else if (_buttonNames[index].title == "Approve Teachers") {
+                          } else if (_buttonNames[index].title == "Verify Teachers") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherEditPage()),
+                                  builder: (context) => TeacherVerifyPage()),
                             );
                           } else if (_buttonNames[index].title == "Log Hours") {
                             Navigator.push(

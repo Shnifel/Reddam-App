@@ -30,7 +30,7 @@ class WelcomePage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     //go to login page
-                    User? currentUser = AuthService().currentUser;
+                    User? currentUser = null; //AuthService().currentUser;
                     if (currentUser == null) {
                       Navigator.pushNamed(context, '/loginPage');
                     } else {

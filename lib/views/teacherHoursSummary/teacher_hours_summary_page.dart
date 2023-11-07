@@ -11,7 +11,7 @@ import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/panel_center/panel_center_page.dart';
 import 'package:cce_project/panel_left/panel_left_page.dart';
 import 'package:cce_project/panel_right/panel_right_page.dart';
-import 'package:cce_project/views/teacherEditUser/teacher_edit_user_panel.dart';
+import 'package:cce_project/views/teacherVerifyTeachers/teacher_verify_teachers_panel.dart';
 
 class TeacherHoursSummaryPage extends StatefulWidget {
   const TeacherHoursSummaryPage({super.key});
