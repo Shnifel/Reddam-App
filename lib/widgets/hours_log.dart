@@ -90,46 +90,47 @@ class _HoursLogInfoState extends State<HoursLogInfo> {
               ]),
           ],
         ),
-        DataTable(
-            headingRowHeight: 0,
-            dataRowMaxHeight: 120.0 * evidence.length,
-            columns: const [
-              DataColumn(
-                  label: Text(
-                'Field',
-                style: TextStyle(fontSize: 12),
-              )),
-              DataColumn(label: Text('Value')),
-            ],
-            rows: [
-              DataRow(cells: [
-                DataCell(Text(
-                  'Evidence',
-                  style: labelStyle,
-                  textAlign: TextAlign.start,
+        if (evidence.isNotEmpty)
+          DataTable(
+              headingRowHeight: 0,
+              dataRowMaxHeight: 120.0 * evidence.length,
+              columns: const [
+                DataColumn(
+                    label: Text(
+                  'Field',
+                  style: TextStyle(fontSize: 12),
                 )),
-                DataCell(Column(
-                    children: evidence
-                        .map(
-                          (image) => ClipRRect(
-                            child: Image.network(
-                              image,
-                              loadingBuilder:
-                                  (context, child, loadingProgress) =>
-                                      (loadingProgress == null)
-                                          ? child
-                                          : CircularProgressIndicator(),
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Center(child: Text("Image not found")),
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.fitHeight,
+                DataColumn(label: Text('Value')),
+              ],
+              rows: [
+                DataRow(cells: [
+                  DataCell(Text(
+                    'Evidence',
+                    style: labelStyle,
+                    textAlign: TextAlign.start,
+                  )),
+                  DataCell(Column(
+                      children: evidence
+                          .map(
+                            (image) => ClipRRect(
+                              child: Image.network(
+                                image,
+                                loadingBuilder: (context, child,
+                                        loadingProgress) =>
+                                    (loadingProgress == null)
+                                        ? child
+                                        : CircularProgressIndicator(),
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Center(child: Text("Image not found")),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.fitHeight,
+                              ),
                             ),
-                          ),
-                        )
-                        .toList())),
-              ]),
-            ])
+                          )
+                          .toList())),
+                ]),
+              ])
       ]),
     );
   }

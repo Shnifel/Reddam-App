@@ -15,6 +15,9 @@ class _TeacherNotificationsPanelPageState
   bool _isLoading = true;
 
   void loadStudentLogs() async {
+    setState(() {
+      _isLoading = true;
+    });
     await TeacherFirestoreService()
         .getStudentLogs(filters: {'validated': false}).then((data) => setState(
               () {
@@ -22,6 +25,10 @@ class _TeacherNotificationsPanelPageState
                 _isLoading = false;
               },
             ));
+  }
+
+  void onValidateComplete() {
+    loadStudentLogs();
   }
 
   @override
@@ -38,7 +45,7 @@ class _TeacherNotificationsPanelPageState
             ? CircularProgressIndicator()
             : ListView(
                 children: _studentLogs
-                    .map((log) => StudentHoursLog(log, () {}))
+                    .map((log) => StudentHoursLog(log, onValidateComplete))
                     .toList()));
   }
 }

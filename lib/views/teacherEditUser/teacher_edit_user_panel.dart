@@ -11,9 +11,7 @@ class _TeacherEditUsersPanelPageState extends State<TeacherEditUsersPanelPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amber,
-      ),
+      backgroundColor: Colors.white,
     );
   }
 }

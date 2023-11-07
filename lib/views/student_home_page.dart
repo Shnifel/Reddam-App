@@ -36,8 +36,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
   double percentActive = 0;
   String goal = 'Full Colours';
   int goalHours = 100;
-  double activeHours = 20;
-  double passiveHours = 30;
+  double activeHours = 0;
+  double passiveHours = 0;
 
   //Constructor
   _StudentHomePageState(String passedName, String passedUserId) {
@@ -71,11 +71,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
   Widget build(BuildContext context) {
     List<Segment> segments = [
       Segment(
-          value: passiveHours as int,
+          value: passiveHours.ceil(),
           color: primaryColour,
           label: const Text("Passive Hours")),
       Segment(
-          value: activeHours as int,
+          value: activeHours.ceil(),
           color: secondaryColour,
           label: const Text("Active Hours")),
     ];
@@ -163,8 +163,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                               color: secondaryColour,
                             ),
                           ),
-                          child: Text(
-                              "${percentActive.round()}% \n Active",
+                          child: Text("${percentActive.round()}% \n Active",
                               style: loginPageText,
                               textAlign: TextAlign.center),
                         ),

@@ -1,4 +1,5 @@
 import 'package:cce_project/helpers/date_forrmater.dart';
+import 'package:cce_project/services/teacher_firestore.dart';
 import 'package:cce_project/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -19,11 +20,28 @@ class _StudentHoursLogState extends State<StudentHoursLog> {
       const TextStyle(color: secondaryColour, fontSize: 12);
   final TextStyle valueStyle = const TextStyle(
       color: primaryColour, fontWeight: FontWeight.bold, fontSize: 12);
+  final TextEditingController _rejectionMessageController =
+      TextEditingController();
+  TeacherFirestoreService firestoreService = TeacherFirestoreService();
+  bool _isLoading = false;
+
+  Future<void> handleAccept() async {
+    await firestoreService.validateHours(
+        widget.data['id'], widget.data['uid'], true,
+        sendNotification: widget.data['token'] != null);
+  }
+
+  Future<void> handleReject() async {
+    await firestoreService.validateHours(
+        widget.data['id'], widget.data['uid'], false,
+        sendNotification: widget.data['token'] != null,
+        rejectionMessage: _rejectionMessageController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
       child: Container(
         decoration: BoxDecoration(
             color: secondaryColour.withAlpha(50),
@@ -168,10 +186,10 @@ class _StudentHoursLogState extends State<StudentHoursLog> {
                                                       loadingProgress) =>
                                                   (loadingProgress == null)
                                                       ? child
-                                                      : CircularProgressIndicator(),
+                                                      : const CircularProgressIndicator(),
                                               errorBuilder: (context, error,
                                                       stackTrace) =>
-                                                  Center(
+                                                  const Center(
                                                       child: Text(
                                                           "Image not found")),
                                               width: 100,
@@ -183,85 +201,130 @@ class _StudentHoursLogState extends State<StudentHoursLog> {
                               ]),
                             ]),
                     ])),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  height: 75,
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
-                  child: FilledButton(
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              10.0), // Adjust the radius here
-                        ),
-                        backgroundColor: Colors.green.withAlpha(100),
-                        side: const BorderSide(
-                          color: primaryColour,
-                          width: 0,
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.check, color: Colors.green),
-                            Text('Accept',
-                                style: loginPageText.copyWith(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                )),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ])),
-                ),
-                Container(
-                  height: 75,
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
-                  child: FilledButton(
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              10.0), // Adjust the radius here
-                        ),
-                        backgroundColor: Colors.red.withAlpha(100),
-                        side: const BorderSide(
-                          color: primaryColour,
-                          width: 0,
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.close,
-                              color: Colors.red,
-                            ),
-                            Text('Reject',
-                                style: loginPageText.copyWith(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                )),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ])),
-                ),
-              ],
-            ),
-            const Padding(
-                padding: EdgeInsets.all(10.0),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: TextField(
-                  decoration: InputDecoration(
+                  controller: _rejectionMessageController,
+                  decoration: const InputDecoration(
                       iconColor: secondaryColour,
                       hintText: 'Rejection message',
                       hintStyle: TextStyle(color: Colors.grey),
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: primaryColour))),
-                  style: TextStyle(color: Colors.black),
-                ))
+                  style: const TextStyle(color: Colors.black),
+                )),
+            if (_isLoading)
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: primaryColour,
+                  )
+                ],
+              )
+            else
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    height: 75,
+                    padding: const EdgeInsets.only(bottom: 20, top: 20),
+                    child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Adjust the radius here
+                          ),
+                          backgroundColor: Colors.green.withAlpha(100),
+                          side: const BorderSide(
+                            color: primaryColour,
+                            width: 0,
+                          ),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          try {
+                            await handleAccept().then((value) {
+                              widget.onComplete();
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            });
+                          } catch (e) {
+                            print(e);
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.check, color: Colors.green),
+                              Text('Accept',
+                                  style: loginPageText.copyWith(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  )),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ])),
+                  ),
+                  Container(
+                    height: 75,
+                    padding: const EdgeInsets.only(bottom: 20, top: 20),
+                    child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Adjust the radius here
+                          ),
+                          backgroundColor: Colors.red.withAlpha(100),
+                          side: const BorderSide(
+                            color: primaryColour,
+                            width: 0,
+                          ),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          try {
+                            await handleReject().then((value) {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                              widget.onComplete();
+                            });
+                          } catch (e) {
+                            print(e);
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                              Text('Reject',
+                                  style: loginPageText.copyWith(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  )),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ])),
+                  ),
+                ],
+              ),
           ],
         ),
       ),

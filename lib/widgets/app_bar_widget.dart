@@ -2,7 +2,18 @@ import 'package:cce_project/styles.dart';
 import 'package:cce_project/views/responsive_layout.dart';
 import 'package:flutter/material.dart';
 
-List<String> _buttonNames = ["Home", "Settings", "Notifications", "Statistics", "Timetable", "Log Hours", "Edit User", "Users", "Logout"];
+List<String> _buttonNames = [
+  "Home",
+  "Settings",
+  "Notifications",
+  "Statistics",
+  "Timetable",
+  "Log Hours",
+  "Edit User",
+  "Users",
+  "Hours summary",
+  "Logout"
+];
 int _currentSelectedButton2 = 0;
 
 class AppBarWidget extends StatefulWidget {
@@ -11,7 +22,8 @@ class AppBarWidget extends StatefulWidget {
   AppBarWidget(this._currentSelectedButton);
 
   @override
-  _AppBarWidgetState createState() => _AppBarWidgetState(_currentSelectedButton);
+  _AppBarWidgetState createState() =>
+      _AppBarWidgetState(_currentSelectedButton);
 }
 
 class _AppBarWidgetState extends State<AppBarWidget> {
@@ -118,10 +130,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                 children: [
                   Text(
                     _buttonNames[_currentSelectedButton],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20
-                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   Container(
                     margin: EdgeInsets.all(10.0 / 2),
