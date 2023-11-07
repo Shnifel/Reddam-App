@@ -35,7 +35,7 @@ class DataExporter {
     var directory;
     bool dirDownloadExists = true;
     if (Platform.isIOS) {
-      directory = await getDownloadsDirectory();
+      directory = await getApplicationDocumentsDirectory();
     } else {
       directory = "/storage/emulated/0/Download/";
 
