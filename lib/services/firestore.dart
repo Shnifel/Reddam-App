@@ -14,8 +14,11 @@ class FirestoreService {
       FirebaseFirestore.instance.collection("Users");
 
   // Reference to hours log colletion
-  final CollectionReference hoursCollection =
+  static CollectionReference hoursCollection =
       FirebaseFirestore.instance.collection("Logs");
+
+  static CollectionReference eventsCollection =
+      FirebaseFirestore.instance.collection("Events");
 
   /// Provide a map of data and create a new user with the given uid and data
   ///
@@ -147,4 +150,50 @@ class FirestoreService {
 
     return logs;
   }
+
+  static Future<void> addEvent(
+      String description, Timestamp date, bool recurring, int frequency
+
+      ) async { try{
+        Map<String,dynamic> data={"description":description,"date":date,"recurring":recurring,"frequency":frequency};
+        await eventsCollection.add(data);
+      } catch(e){
+        print(e);
+        }
+  }
+
+
+
+
+
+  static Future<List<Map<String, dynamic>>> getEvents() async {
+    QuerySnapshot querySnapshot = await eventsCollection.get();
+
+    List<Map<String, dynamic>> logs = [];
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      logs.add(data);
+    });
+    return logs;
+  }
+
+
+  static Future<void> deleteEvent(Timestamp date) async {try {
+    DateTime dateOnly=date.toDate();
+    QuerySnapshot querySnapshot = await eventsCollection
+        .where('date', isEqualTo: Timestamp.fromDate(dateOnly))
+        .get();
+    if (querySnapshot.docs.isNotEmpty) {
+      var doc = querySnapshot.docs.first;
+      await eventsCollection.doc(doc.id).delete();
+    } else {
+      print('No events found with the specified date.');
+      print("the date " +dateOnly.toString());
+    }
+  }catch(e){
+    print(e);
+  }
+  }
+
 }
