@@ -54,8 +54,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Kollektif',
+        scaffoldBackgroundColor: Colors.white, 
       ),
-      home: const WelcomePage(),
+      home: const LoginPage(),
       // Named routes in the app
       routes: {
         '/loginPage': (context) => const LoginPage(),

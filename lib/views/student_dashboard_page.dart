@@ -181,7 +181,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 String.fromCharCode(MyIcons.home_unfilled.codePoint),
                 style: TextStyle(
                   inherit: false,
-                  fontSize: 25.0,
+                  fontSize: 20.0,
                   color: primaryColour.withOpacity(0.4),
                   fontWeight: FontWeight.bold,
                   fontFamily: MyIcons.home_unfilled.fontFamily,
@@ -380,5 +380,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
         child: bottomNavigationBar,
       ),
     );
+
   }
 }
