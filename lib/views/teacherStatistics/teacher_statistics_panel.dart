@@ -45,10 +45,6 @@ class _TeacherStatisticsPanelPageState extends State<TeacherStatisticsPanelPage>
     });
   }
 
-  void loadUsers() async{
-
-  }
-
   @override
   void initState(){
     super.initState();

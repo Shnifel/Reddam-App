@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
-import 'package:cce_project/arguments/student_home_args.dart';
-import 'package:cce_project/services/firestore.dart';
+import 'package:cce_project/arguments/student_home_page_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/styles.dart';
@@ -9,73 +6,47 @@ import 'package:cce_project/styles.dart';
 class StudentHomePage extends StatefulWidget {
   //We have to initialise the variables
   String name = '';
-  String userID = '';
 
   //Constructor
-  StudentHomePage(String passedName, String passedUserId, {super.key}) {
+  StudentHomePage(String passedName, {super.key}) {
     name = passedName;
-    userID = passedUserId;
   }
 
   @override
-  State<StudentHomePage> createState() => _StudentHomePageState(name, userID);
+  State<StudentHomePage> createState() => _StudentHomePageState(name);
 }
 
 class _StudentHomePageState extends State<StudentHomePage> {
   //We have to initialise the variables
   String name = '';
-  String userID = '';
-
-  //Extract the arguments passed to this page
-  // StudentHomeArgs arguments =
-  //     ModalRoute.of(context)!.settings.arguments as StudentHomeArgs;
-  // String goal = arguments.goal;
-  // int goalHours = arguments.goalHours;
-  // double activeHours = arguments.activeHours;
-  // double passiveHours = arguments.passiveHours;
-  double percentActive = 0;
-  String goal = 'Full Colours';
-  int goalHours = 100;
-  double activeHours = 0;
-  double passiveHours = 0;
 
   //Constructor
-  _StudentHomePageState(String passedName, String passedUserId) {
+  _StudentHomePageState(String passedName) {
     name = passedName;
-    userID = passedUserId;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    aggregateHours();
-  }
-
-  void aggregateHours() async {
-    FirestoreService firestoreService = FirestoreService(uid: userID);
-    Map<String, double> hours =
-        await firestoreService.aggregateHours() as Map<String, double>;
-    setState(() {
-      passiveHours = hours['Passive']!;
-      activeHours = hours['Active']!;
-      if (passiveHours == 0 && activeHours == 0) {
-        percentActive = 0;
-      } else {
-        percentActive =
-            (100.0 * hours['Active']!) / (hours['Active']! + hours['Passive']!);
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    //Extract the arguments passed to this page
+    // StudentHomeArgs arguments =
+    //     ModalRoute.of(context)!.settings.arguments as StudentHomeArgs;
+    // String goal = arguments.goal;
+    // int goalHours = arguments.goalHours;
+    // int activeHours = arguments.activeHours;
+    // int passiveHours = arguments.passiveHours;
+
+    String goal = 'Full Colours';
+    int goalHours = 100;
+    int activeHours = 20;
+    int passiveHours = 30;
+
     List<Segment> segments = [
       Segment(
-          value: passiveHours.ceil(),
+          value: passiveHours,
           color: primaryColour,
           label: const Text("Passive Hours")),
       Segment(
-          value: activeHours.ceil(),
+          value: activeHours,
           color: secondaryColour,
           label: const Text("Active Hours")),
     ];
@@ -163,7 +134,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
                               color: secondaryColour,
                             ),
                           ),
-                          child: Text("${percentActive.round()}% \n Active",
+                          child: Text(
+                              "${(activeHours * 100 / (passiveHours + activeHours)).round()}% \n Active",
                               style: loginPageText,
                               textAlign: TextAlign.center),
                         ),

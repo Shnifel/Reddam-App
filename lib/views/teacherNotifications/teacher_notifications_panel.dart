@@ -1,5 +1,7 @@
 import 'package:cce_project/services/teacher_firestore.dart';
+import 'package:cce_project/services/teacher_firestore.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/teacherNotifications/student_log.dart';
 import 'package:cce_project/views/teacherNotifications/student_log.dart';
 import 'package:flutter/material.dart';
 

@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Kollektif',
         dividerColor:
             Colors.transparent, // Set the divider color to transparent
-        scaffoldBackgroundColor: Colors.white, 
+        scaffoldBackgroundColor: Colors.white,
       ),
       home: const WelcomePage(),
       // Named routes in the app
