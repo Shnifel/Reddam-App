@@ -234,8 +234,25 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 // Add spacing between column elements
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
+                  Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          FirebaseAuth.instance.signOut();
+                          Navigator.pushNamed(context, '/loginPage');
+                        },
+                        icon: const Icon(
+                          Icons.logout,
+                          color: secondaryColour,
+                        ),
+                        label: const Text("Log out",
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 15)),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color?>(
+                                Colors.white)),
+                      )),
                   // Students name
-
                   SingleChildScrollView(
                       // This ensures that the student's name is resized to fit the screen
                       child: Text("Hi, $name!",

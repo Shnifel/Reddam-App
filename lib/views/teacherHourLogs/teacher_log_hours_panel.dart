@@ -146,9 +146,18 @@ class _TeacherLogHoursPanelPageState extends State<TeacherLogHoursPanelPage> {
         print(users);
         print(students);
 
-        await firestore.logHoursBatch(
-            students, _typeSelected, _typeActive, amount,
-            activeType: _activeChoice);
+        await firestore
+            .logHoursBatch(students, _typeSelected, _typeActive, amount,
+                activeType: _activeChoice)
+            .then((value) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Color.fromARGB(255, 11, 123, 35),
+              content: Text("Successfully logged new hours",
+                  textAlign: TextAlign.center),
+            ),
+          );
+        });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -580,7 +589,8 @@ class _TeacherLogHoursPanelPageState extends State<TeacherLogHoursPanelPage> {
                                   width: 10,
                                 ),
                                 if (_submitLoading)
-                                  const CircularProgressIndicator(color: primaryColour)
+                                  const CircularProgressIndicator(
+                                      color: primaryColour)
                               ])),
                     ),
                   ],
