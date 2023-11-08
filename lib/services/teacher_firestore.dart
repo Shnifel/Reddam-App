@@ -25,6 +25,17 @@ class TeacherFirestoreService {
     return snapshot.data() as Map<String, dynamic>;
   }
 
+  Future<String?> uploadFile(File? photo) async {
+    if (photo == null) return null; // Verify non-null File provided
+    final fileName = basename(photo.path); // Extract uploaded file name
+    final destination = 'files/$fileName'; // Set destination path
+    final ref = FirebaseStorage.instance
+        .ref(destination)
+        .child('file/'); // Create reference to firebase storage
+    await ref.putFile(photo); // Upload file
+    return await ref.getDownloadURL(); // Obtain download url
+  }
+
   /// Log hours for a user. Creates a new document in the 'Logs' collection
   ///
   /// [uid] - User id of person whose receiving hours

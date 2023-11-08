@@ -12,8 +12,8 @@ class DataSummaryTable extends StatefulWidget {
 }
 
 class _DataSummaryTableState extends State<DataSummaryTable> {
-  final TextStyle labelStyle =
-      const TextStyle(color: secondaryColour, fontSize: 12);
+  final TextStyle labelStyle = const TextStyle(
+      color: secondaryColour, fontSize: 15, fontWeight: FontWeight.bold);
   final TextStyle valueStyle = const TextStyle(
       color: primaryColour, fontWeight: FontWeight.bold, fontSize: 12);
   int _sortColumnIndex = 0;
@@ -59,6 +59,18 @@ class _DataSummaryTableState extends State<DataSummaryTable> {
                                       setState(() {
                                         _sortColumnIndex = columnIndex;
                                         _sortAscending = ascending;
+
+                                        widget.data.sort(((a, b) {
+                                          if (ascending) {
+                                            return a[fields[_sortColumnIndex]]
+                                                .compareTo(b[
+                                                    fields[_sortColumnIndex]]);
+                                          } else {
+                                            return b[fields[_sortColumnIndex]]
+                                                .compareTo(a[
+                                                    fields[_sortColumnIndex]]);
+                                          }
+                                        }));
                                       });
                                     },
                                   ),

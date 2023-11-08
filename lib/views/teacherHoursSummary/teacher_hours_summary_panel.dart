@@ -231,15 +231,11 @@ class _TeacherHoursSummaryPanelPageState
                       onPressed: () async {
                         String filePath =
                             await DataExporter(displayData).writeExcel();
+                        print(filePath);
 
                         final file = File(filePath);
 
                         if (await file.exists()) {
-                          // Provide a way to download the file
-                          print(
-                              '${(await getDownloadsDirectory())!.path}/data.xlsx');
-                          await file.copy(
-                              '${(await getDownloadsDirectory())!.path}/data.xlsx');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('File downloaded successfully')),
