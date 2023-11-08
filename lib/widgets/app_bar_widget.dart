@@ -35,7 +35,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: primaryColour,
-      child: Row(
+      child: Stack(
         children: [
           if (ResponsiveLayout.isComputer(context))
             Container(
@@ -77,7 +77,6 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   primary: Colors.white,
                   side: BorderSide(color: Colors.white, width: 0.4)),
             ),
-          Spacer(),
           if (ResponsiveLayout.isComputer(context))
             ...List.generate(
               _buttonNames.length,
@@ -87,9 +86,9 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     _currentSelectedButton2 = index;
                   });
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0 * 2),
-                  child: Column(
+                child: Expanded(
+                  //padding: const EdgeInsets.all(10.0 * 2),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -121,11 +120,13 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                 ),
               ),
             )
+          // RELEVANT
           else
-            Padding(
-              padding: const EdgeInsets.only(left: 40, top: 70),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 60),
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
@@ -141,39 +142,40 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     ),
                   ),
                 ],
+                )
               ),
             ),
           const Spacer(),
-          IconButton(
-            padding: const EdgeInsets.only(top: 60),
-            color: Colors.white,
-            iconSize: 30,
-            onPressed: () {},
-            icon: const Icon(Icons.search),
-          ),
-          Stack(
-            children: [
-              IconButton(
-                padding: const EdgeInsets.only(right: 10, top: 60),
-                color: Colors.white,
-                iconSize: 30,
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_none_outlined),
-              ),
-              // Positioned(
-              //   right: 10,
-              //   top: 10,
-              //   child: CircleAvatar(
-              //     backgroundColor: Colors.pink,
-              //     radius: 8,
-              //     child: Text(
-              //       "3",
-              //       style: TextStyle(fontSize: 10, color: Colors.white),
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
+          // IconButton(
+          //   padding: const EdgeInsets.only(top: 60),
+          //   color: Colors.white,
+          //   iconSize: 30,
+          //   onPressed: () {},
+          //   icon: const Icon(Icons.search),
+          // ),
+          // Stack(
+          //   children: [
+          //     IconButton(
+          //       padding: const EdgeInsets.only(right: 10, top: 60),
+          //       color: Colors.white,
+          //       iconSize: 30,
+          //       onPressed: () {},
+          //       icon: const Icon(Icons.notifications_none_outlined),
+          //     ),
+          //     // Positioned(
+          //     //   right: 10,
+          //     //   top: 10,
+          //     //   child: CircleAvatar(
+          //     //     backgroundColor: Colors.pink,
+          //     //     radius: 8,
+          //     //     child: Text(
+          //     //       "3",
+          //     //       style: TextStyle(fontSize: 10, color: Colors.white),
+          //     //     ),
+          //     //   ),
+          //     // ),
+          //   ],
+          // ),
           if (!ResponsiveLayout.isPhone(context))
             Container(
               margin: const EdgeInsets.all(10.0),

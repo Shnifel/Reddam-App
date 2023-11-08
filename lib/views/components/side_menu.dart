@@ -41,7 +41,7 @@ List<ButtonsInfo> _buttonNames = [
   ButtonsInfo(title: "Timetable", icon: Icons.calendar_month_sharp),
   ButtonsInfo(title: "Log Hours", icon: Icons.access_time_outlined),
   ButtonsInfo(title: "Verify Teachers", icon: Icons.verified_user),
-  ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
+  // ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
   ButtonsInfo(title: "Hours Summary", icon: Icons.share),
   ButtonsInfo(title: "Log Out", icon: Icons.logout_sharp),
 ];
@@ -159,12 +159,12 @@ class _SideMenu extends State<SideMenu> {
                                   builder: (context) =>
                                       TeacherStatisticsPage()),
                             );
-                          } else if (_buttonNames[index].title == "Users") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TeacherUsersPage()),
-                            );
+                          // } else if (_buttonNames[index].title == "Users") {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => TeacherUsersPage()),
+                          //   );
                           } else if (_buttonNames[index].title ==
                               "Hours Summary") {
                             Navigator.push(
