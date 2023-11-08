@@ -300,9 +300,7 @@ class TeacherFirestoreService {
         "day": dayOfWeek
       };
       await eventsCollection.add(data);
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<List<Map<String, dynamic>>> getEvents() async {
