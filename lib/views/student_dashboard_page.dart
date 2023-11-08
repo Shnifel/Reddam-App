@@ -260,11 +260,13 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               fontSize: 35, fontWeight: FontWeight.bold))),
 
                   // Reddam Crest
-                  SizedBox(
-                    height: 75,
-                    width: 200,
-                    child:
-                        Image.asset("assets/images/ReddamHouseCrest.svg.png"),
+                  Padding(padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    child: SizedBox(
+                      height: 200,
+                      width: 200,
+                      child:
+                          Image.asset("assets/images/ReddamHouseCrest.svg.png"),
+                    ),
                   ),
 
                   Container(
@@ -302,30 +304,30 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     ),
                   ),
 
-                  const SizedBox(height: 15),
+                  //const SizedBox(height: 15),
 
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("You are currently working towards:",
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 20,
-                            )),
+                  // SingleChildScrollView(
+                  //   scrollDirection: Axis.horizontal,
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       const Text("You are currently working towards:",
+                  //           style: TextStyle(
+                  //             color: Colors.black87,
+                  //             fontSize: 20,
+                  //           )),
 
-                        // Current objective
-                        Text(
-                          goal,
-                          style: const TextStyle(
-                            color: primaryColour,
-                            fontSize: 23,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  //       // Current objective
+                  //       Text(
+                  //         goal,
+                  //         style: const TextStyle(
+                  //           color: primaryColour,
+                  //           fontSize: 23,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ),
