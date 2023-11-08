@@ -234,7 +234,7 @@ class TeacherFirestoreService {
       // Generate a new document reference
       if (data['amount'] != null && data['amount'] != 0) {
         var newDocRef = hoursCollection.doc();
-        data['docId'] = newDocRef;
+        data['docId'] = newDocRef.id;
         print(newDocRef);
         Map<String, dynamic> studentLog = {
           'uid': data['id'], // User id
@@ -258,7 +258,7 @@ class TeacherFirestoreService {
       if (data['excess'] != null && data['excess'] != 0) {
         var excessDocRef = hoursCollection.doc();
         print(excessDocRef);
-        data['docId'] = excessDocRef;
+        data['docId'] = excessDocRef.id;
 
         Map<String, dynamic> excessLog = {
           'uid': data['id'], // User id
@@ -283,8 +283,8 @@ class TeacherFirestoreService {
 
     for (var user in dataList) {
       if (user['docId'] != null) {
-        NotificationServices.sendNotification(
-            user['id'], "New hours allocated to you", "",
+        NotificationServices.sendNotification(user['id'],
+            "New hours allocated to you", "New hours allocated to you",
             id: user['docId'], notificationType: "HOURS");
       }
     }

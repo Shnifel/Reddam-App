@@ -168,6 +168,7 @@ class _TeacherLogHoursPanelPageState extends State<TeacherLogHoursPanelPage> {
         );
       }
     } catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Color.fromARGB(255, 123, 11, 24),
