@@ -10,9 +10,7 @@ class _TeacherPanelPageState extends State<TeacherSettingsPanelPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: secondaryColour,
-      ),
+      appBar: null,
     );
   }
 }

@@ -24,7 +24,7 @@ class _TeacherSettings extends State<TeacherSettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size(double.infinity, 100),
+          preferredSize: Size(double.infinity, 50),
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
