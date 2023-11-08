@@ -25,7 +25,7 @@ class _AddEventState extends State<AddEvent> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
 
-  DateTime? _selectedDate;
+  DateTime? _selectedDate = DateTime.now();
 
   String getDayOfWeek(DateTime dateTime) {
     List<String> daysOfWeek = [
@@ -278,13 +278,14 @@ class _AddEventState extends State<AddEvent> {
                               _descriptionController.text,
                               Timestamp.fromDate(newDateTime),
                               recurring,
-                              recurring
+                              recurring && _selectedDate != null
                                   ? _selectedDate!.weekday
                                   : selectedDate.weekday)
                           .then((value) => setState(
                                 () {
                                   _isLoading = false;
                                   _addEvent = false;
+                                  widget.onFinish();
                                 },
                               ));
                     },

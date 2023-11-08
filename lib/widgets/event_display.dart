@@ -6,11 +6,12 @@ import 'package:flutter/widgets.dart';
 
 class EventDisplay extends StatefulWidget {
   final String description, time, eventId;
+  final bool showDelete;
 
   final Function onDelete;
 
   const EventDisplay(this.eventId, this.description, this.time, this.onDelete,
-      {super.key});
+      {this.showDelete = true, super.key});
 
   @override
   State<EventDisplay> createState() => _EventDisplayState();
@@ -44,21 +45,22 @@ class _EventDisplayState extends State<EventDisplay> {
                 widget.description,
                 style: const TextStyle(color: secondaryColour, fontSize: 15),
               )),
-          Expanded(
-              child: IconButton(
-                  alignment: Alignment.centerRight,
-                  onPressed: () async {
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    await TeacherFirestoreService()
-                        .deleteEvent(widget.eventId)
-                        .then((value) => widget.onDelete());
-                  },
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.grey,
-                  )))
+          if (widget.showDelete)
+            Expanded(
+                child: IconButton(
+                    alignment: Alignment.centerRight,
+                    onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await TeacherFirestoreService()
+                          .deleteEvent(widget.eventId)
+                          .then((value) => widget.onDelete());
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.grey,
+                    )))
         ]),
       );
     }

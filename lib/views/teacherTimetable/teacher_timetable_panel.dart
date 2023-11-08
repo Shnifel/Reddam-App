@@ -58,13 +58,13 @@ class _TeacherTimetablePanelPageState extends State<TeacherTimetablePanelPage> {
           padding: const EdgeInsets.only(top: 10.0),
           child: Center(
               child: ListView(children: <Widget>[
-            AddEvent(() => {
-                  TeacherFirestoreService()
-                      .getEvents()
-                      .then((value) => setState(() {
-                            events = value;
-                          }))
-                }),
+            AddEvent(() async {
+              await TeacherFirestoreService()
+                  .getEvents()
+                  .then((value) => setState(() {
+                        events = value;
+                      }));
+            }),
             TableCalendar(
               rowHeight: 75,
               headerStyle: const HeaderStyle(
