@@ -1,10 +1,33 @@
 import 'package:excel/excel.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 
 class DataExporter {
+  static Future<String> getExternalDocumentPath() async {
+    // To check whether permission is given for this app or not.
+    var status = await Permission.manageExternalStorage.status;
+    if (!status.isGranted) {
+      // If not we will ask for permission first
+      await Permission.manageExternalStorage.request();
+    }
+    Directory _directory = Directory("");
+    if (Platform.isAndroid) {
+      // Redirects it to download folder in android
+      _directory = Directory("/storage/emulated/0/Download");
+    } else {
+      _directory = await getApplicationDocumentsDirectory();
+    }
+
+    final exPath = _directory.path;
+    print("Saved Path: $exPath");
+    await Directory(exPath).create(recursive: true);
+    return exPath;
+  }
+
   List<Map<String, dynamic>> data;
 
   DataExporter(this.data);
@@ -32,29 +55,28 @@ class DataExporter {
             .value = rowData[j];
       }
     }
-    var directory;
-    bool dirDownloadExists = true;
-    if (Platform.isIOS) {
-      directory = await getApplicationDocumentsDirectory();
-    } else {
-      directory = "/storage/emulated/0/Download/";
 
-      dirDownloadExists = await Directory(directory).exists();
-      if (dirDownloadExists) {
-        directory = "/storage/emulated/0/Download/";
-      } else {
-        directory = "/storage/emulated/0/Downloads/";
-      }
+    var directory = await getExternalDocumentPath();
+    var filePath = '$directory/excel_data.xlsx';
+    List<int>? dataFile = excel.encode();
+    var status = await Permission.manageExternalStorage.request();
+    if (status.isDenied) {
+      // Handle permission denied
+      return "";
     }
 
-    // Save the file
+    await File(filePath).writeAsBytes(dataFile!);
 
-    var filePath = '$directory/data.xlsx';
-    print(filePath);
-    List<int>? dataFile = excel.encode();
-    File(filePath).writeAsBytes(dataFile!);
+    // Upload to Firebase Storage
+    // final ref = FirebaseStorage.instance.ref(
+    //     'uploads/excel_spread.xlsx'); // Change 'uploads/' to your desired storage path
 
-    return filePath;
+    // await ref.putFile(File(filePath));
+
+    // // Get the download URL
+    // String downloadURL = await ref.getDownloadURL();
+
+    return filePath; // Return the download URL
   }
 
   Future<void> writePdf() async {
