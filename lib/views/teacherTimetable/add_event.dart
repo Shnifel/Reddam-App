@@ -286,6 +286,15 @@ class _AddEventState extends State<AddEvent> {
                                   _isLoading = false;
                                   _addEvent = false;
                                   widget.onFinish();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 11, 123, 35),
+                                      content: Text(
+                                          "Successfully added new event",
+                                          textAlign: TextAlign.center),
+                                    ),
+                                  );
                                 },
                               ));
                     },

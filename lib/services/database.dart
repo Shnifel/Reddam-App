@@ -12,7 +12,7 @@ class LocalDatabaseProvider {
   }
 
   static Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'Notifications.db');
+    String path = join(await getDatabasesPath(), 'NotificationsCentre.db');
 
     return await openDatabase(path, version: 1, onCreate: _createDatabase);
   }
