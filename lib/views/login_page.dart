@@ -111,11 +111,16 @@ Widget buildLoginButton(
                 (await FirestoreService(uid: userID).getData(userID))!;
 
             bool? isTeacher = user_data["isTeacher"];
+            bool? isVerified = user_data["isVerified"];
 
-            if (isTeacher != null && isTeacher) {
+            if (isTeacher != null && isTeacher && isVerified != null && isVerified) {
               Navigator.pushNamed(context, '/teacherDashboardPage',
                   arguments: UserInfoArguments(userID, name));
-            } else {
+            } else if(isTeacher != null && isTeacher && isVerified != null && !isVerified){
+              Navigator.pushNamed(context, '/notVerifiedPage',
+                  arguments: UserInfoArguments(userID, name));
+            }
+            else {
               Navigator.pushNamed(context, '/studentDashboardPage',
                   arguments: UserInfoArguments(userID, name));
             }
@@ -212,7 +217,7 @@ Widget buildLoginButton(
         ],
       ),
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text("Don't have an account?",
               style: loginPageText.copyWith(
@@ -220,19 +225,42 @@ Widget buildLoginButton(
                 color: Colors.black,
                 fontStyle: FontStyle.italic,
               )),
-          TextButton(
-              onPressed: () {
-                //go to signup page
-                Navigator.pushNamed(context, '/signupPage');
-              },
-              child: Text(
-                'Sign up',
-                style: loginPageText.copyWith(
-                  fontSize: 14,
-                  color: secondaryColour,
-                ),
-                textAlign: TextAlign.right,
-              ))
+          Expanded(
+            child: 
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      //go to signup page
+                      Navigator.pushNamed(context, '/signupPage');
+                    },
+                    child: Text(
+                      'Student',
+                      style: loginPageText.copyWith(
+                        fontSize: 14,
+                        color: secondaryColour,
+                        fontStyle: FontStyle.italic
+                      ),
+                      textAlign: TextAlign.right,
+                    )),
+                  TextButton(
+                    onPressed: () {
+                      //go to signup page
+                      Navigator.pushNamed(context, '/signupPageTeacher');
+                    },
+                    child: Text(
+                      'Teacher',
+                      style: loginPageText.copyWith(
+                        fontSize: 14,
+                        color: secondaryColour,
+                        fontStyle: FontStyle.italic
+                      ),
+                      textAlign: TextAlign.right,
+                    ))
+                ],
+              )
+          )
         ],
       ),
     ],

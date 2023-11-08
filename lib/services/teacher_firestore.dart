@@ -265,4 +265,38 @@ class TeacherFirestoreService {
     // Commit the batch
     await batch.commit();
   }
+
+  // Get all unverified teachers
+  Future<List> getUnverifiedTeachers() async {
+    var db = FirebaseFirestore.instance;
+
+    List allData = [];
+
+    await db
+        .collection("Users")
+        // Only consider dates in the current year
+        .where("isVerified", isEqualTo: false)
+        .where("checked", isEqualTo: false)
+        .get()
+        .then(
+      (querySnapshot) async {
+        for (var docSnapshot in querySnapshot.docs) {
+          Map<String, dynamic> data = docSnapshot.data();
+          data['id'] = docSnapshot.id;
+          allData.add(data);
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+
+    return allData;
+  }
+
+  // Approve/reject verification of teacher
+  Future<void> verifyTeacher(String teacherID, bool b) async {
+    await collection.doc(teacherID).update({
+      "isVerified": b,
+      "checked": true,
+    });
+  }
 }

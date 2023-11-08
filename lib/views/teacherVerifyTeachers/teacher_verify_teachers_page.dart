@@ -10,16 +10,16 @@ import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/panel_center/panel_center_page.dart';
 import 'package:cce_project/panel_left/panel_left_page.dart';
 import 'package:cce_project/panel_right/panel_right_page.dart';
-import 'package:cce_project/views/teacherEditUser/teacher_edit_user_panel.dart';
+import 'package:cce_project/views/teacherVerifyTeachers/teacher_verify_teachers_panel.dart';
 
-class TeacherEditPage extends StatefulWidget {
-  const TeacherEditPage({super.key});
+class TeacherVerifyPage extends StatefulWidget {
+  const TeacherVerifyPage({super.key});
 
   @override
   _TeacherEdit createState() => _TeacherEdit();
 }
 
-class _TeacherEdit extends State<TeacherEditPage> {
+class _TeacherEdit extends State<TeacherVerifyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +31,14 @@ class _TeacherEdit extends State<TeacherEditPage> {
               : AppBarWidget(6)),
       body: ResponsiveLayout(
         tiny: Container(),
-        phone: TeacherEditUsersPanelPage(),
+        phone: TeacherVerifyTeachersPanelPage(),
         tablet: Row(
           children: [
             Expanded(
               child: PanelLeftPage(),
             ),
             Expanded(
-              child: TeacherEditUsersPanelPage(),
+              child: TeacherVerifyTeachersPanelPage(),
             ),
           ],
         ),
@@ -48,7 +48,7 @@ class _TeacherEdit extends State<TeacherEditPage> {
               child: PanelLeftPage(),
             ),
             Expanded(
-              child: TeacherEditUsersPanelPage(),
+              child: TeacherVerifyTeachersPanelPage(),
             ),
             Expanded(child: PanelRightPage()),
           ],
@@ -59,7 +59,7 @@ class _TeacherEdit extends State<TeacherEditPage> {
               child: PanelLeftPage(),
             ),
             Expanded(
-              child: TeacherEditUsersPanelPage(),
+              child: TeacherVerifyTeachersPanelPage(),
             ),
             Expanded(child: PanelRightPage()),
           ],
