@@ -3,6 +3,7 @@ import 'package:cce_project/services/badge_notifier.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/services/notifications.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/event_page.dart';
 import 'package:cce_project/views/hours_history_page.dart';
 import 'package:cce_project/views/hours_log_page.dart';
 import 'package:cce_project/views/hours_page.dart';
@@ -71,12 +72,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
   List<Segment> segments = [];
   double percentActive = 0;
   DateTime today = DateTime.now();
-
-  void _onDaySelected(DateTime day, DateTime FocusedDay) {
-    setState(() {
-      today = day;
-    });
-  }
 
   //variables for bottom nav bar
   int currentIndex = 0; //keeps track of current selected item
@@ -345,22 +340,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
 
       //events
-      Padding(
-          padding: const EdgeInsets.only(top: 40.0),
-          child: Center(
-              child: Column(children: <Widget>[
-            TableCalendar(
-              rowHeight: 75,
-              headerStyle: const HeaderStyle(
-                  formatButtonVisible: false, titleCentered: true),
-              availableGestures: AvailableGestures.all,
-              selectedDayPredicate: (day) => isSameDay(day, today),
-              focusedDay: today,
-              firstDay: DateTime.utc(2023, 09, 20),
-              lastDay: DateTime.utc(2030, 12, 31),
-              onDaySelected: _onDaySelected,
-            ),
-          ]))),
+      EventsPage(),
 
       // Hours history page
       Center(child: HoursHistoryPage(focus: focusDoc)),

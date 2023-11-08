@@ -14,6 +14,9 @@ class TeacherFirestoreService {
   final CollectionReference hoursCollection =
       FirebaseFirestore.instance.collection("Logs");
 
+  final CollectionReference eventsCollection =
+      FirebaseFirestore.instance.collection("Events");
+
   /// Obtain a user's data based on a provided id
   ///
   /// [id] - User's firebase id
@@ -264,6 +267,41 @@ class TeacherFirestoreService {
     }
     // Commit the batch
     await batch.commit();
+  }
+
+  Future<void> addEvent(
+      String description, Timestamp date, bool recurring, int dayOfWeek) async {
+    try {
+      Map<String, dynamic> data = {
+        "description": description,
+        "date": date,
+        "recurring": recurring,
+        "day": dayOfWeek
+      };
+      await eventsCollection.add(data);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getEvents() async {
+    QuerySnapshot querySnapshot = await eventsCollection.get();
+
+    List<Map<String, dynamic>> logs = [];
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      logs.add(data);
+    });
+    return logs;
+  }
+
+  Future<void> deleteEvent(String eventID) async {
+    try {
+      await eventsCollection.doc(eventID).delete();
+    } catch (e) {
+      print(e);
+    }
   }
 
   // Get all unverified teachers

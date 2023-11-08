@@ -17,6 +17,9 @@ class FirestoreService {
   final CollectionReference hoursCollection =
       FirebaseFirestore.instance.collection("Logs");
 
+  static CollectionReference eventsCollection =
+      FirebaseFirestore.instance.collection("Events");
+
   /// Provide a map of data and create a new user with the given uid and data
   ///
   /// [data] All user related data
@@ -176,7 +179,9 @@ class FirestoreService {
         for (var docSnapshot in querySnapshot.docs) {
           Map<String, dynamic> data = docSnapshot.data();
           // Get the user with the specified uid
-          Map<String, dynamic>? user = users.docs.firstWhere((element) => element.id == data["uid"]).data() as Map<String, dynamic>?;
+          Map<String, dynamic>? user = users.docs
+              .firstWhere((element) => element.id == data["uid"])
+              .data() as Map<String, dynamic>?;
           // Add the grade, class, and house to each log
           data["grade"] = user!["grade"];
           data["class"] = user["class"];
@@ -201,5 +206,17 @@ class FirestoreService {
     QuerySnapshot userData = await db.collection("Users").get();
 
     return userData;
+  }
+
+  static Future<List<Map<String, dynamic>>> getEvents() async {
+    QuerySnapshot querySnapshot = await eventsCollection.get();
+
+    List<Map<String, dynamic>> logs = [];
+    querySnapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      logs.add(data);
+    });
+    return logs;
   }
 }

@@ -30,14 +30,15 @@ class WelcomePage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     //go to login page
-                    User? currentUser = null; //AuthService().currentUser;
+                    User? currentUser = AuthService().currentUser;
                     if (currentUser == null) {
                       Navigator.pushNamed(context, '/loginPage');
                     } else {
                       Map<dynamic, dynamic> userData =
                           await FirestoreService(uid: currentUser.uid)
                               .getData(currentUser.uid);
-                      if (userData["isTeacher"] == true) {
+                      if (userData["isTeacher"] == true &&
+                          userData["isVerified"] == true) {
                         Navigator.pushNamed(context, '/teacherDashboardPage',
                             arguments: UserInfoArguments(
                                 currentUser.uid, userData["firstName"]));

@@ -16,6 +16,8 @@ class _DataSummaryTableState extends State<DataSummaryTable> {
       const TextStyle(color: secondaryColour, fontSize: 12);
   final TextStyle valueStyle = const TextStyle(
       color: primaryColour, fontWeight: FontWeight.bold, fontSize: 12);
+  int _sortColumnIndex = 0;
+  bool _sortAscending = true;
   @override
   Widget build(BuildContext context) {
     if (widget.data.isEmpty) {
@@ -33,6 +35,8 @@ class _DataSummaryTableState extends State<DataSummaryTable> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         DataTable(
+                            sortColumnIndex: _sortColumnIndex,
+                            sortAscending: _sortAscending,
                             border: TableBorder(
                               horizontalInside:
                                   BorderSide(color: Colors.black, width: 0.7),
@@ -47,10 +51,17 @@ class _DataSummaryTableState extends State<DataSummaryTable> {
                             columns: fields
                                 .map(
                                   (field) => DataColumn(
-                                      label: Text(
-                                    field,
-                                    style: labelStyle,
-                                  )),
+                                    label: Text(
+                                      field,
+                                      style: labelStyle,
+                                    ),
+                                    onSort: (columnIndex, ascending) {
+                                      setState(() {
+                                        _sortColumnIndex = columnIndex;
+                                        _sortAscending = ascending;
+                                      });
+                                    },
+                                  ),
                                 )
                                 .toList(),
                             rows: widget.data
