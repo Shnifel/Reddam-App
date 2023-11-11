@@ -21,7 +21,8 @@ class PanelCenterPage extends StatefulWidget {
 
 class _PanelCenterPageState extends State<PanelCenterPage> {
   bool isLoading = false;
-  FirestoreService firestoreService = FirestoreService(uid: FirebaseAuth.instance.currentUser!.uid);
+  FirestoreService firestoreService =
+      FirestoreService(uid: FirebaseAuth.instance.currentUser!.uid);
 
   List allData = [];
   List allDataCopy = [];
@@ -107,156 +108,154 @@ class _PanelCenterPageState extends State<PanelCenterPage> {
         _grade12Data.sort((a, b) => a.hours.compareTo(b.hours));
         _grade12Data = List.from(_grade12Data.reversed);
         topClass12 = _grade12Data[0].name;
-
-
       });
     });
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     isLoading = true;
     loadHours();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          !isLoading ?SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 10, bottom: 10), 
-                  child: Text("Top Student", style: TextStyle(fontSize: 30))
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2.2,
-                      child:
-                          Image.asset("assets/images/Student.png"),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10), 
-                  child: Text(topStudent, style: const TextStyle(fontSize: 24))
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 10), 
-                      child: Text("Top House", style: TextStyle(fontSize: 30))
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 10), 
-                      child: Text("Top Grade", style: TextStyle(fontSize: 30))
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2.2,
-                      child:
-                          Image.asset("assets/images/House.png"),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2.2,
-                      child:
-                          Image.asset("assets/images/Grade.png"),
-                    ),
-                  ],
-                ), 
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          !isLoading
+              ? SingleChildScrollView(
+                  child: Column(
                     children: <Widget>[
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2,
-                        child: Text(topHouse, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center)
+                      const Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Text("Top Student",
+                              style: TextStyle(fontSize: 30))),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2.2,
+                            child: Image.asset("assets/images/Student.png"),
+                          )
+                        ],
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2,
-                        child: Text(topGrade, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center)
+                      Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                          child: Text(topStudent,
+                              style: const TextStyle(fontSize: 24))),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text("Top House",
+                                  style: TextStyle(fontSize: 30))),
+                          Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text("Top Grade",
+                                  style: TextStyle(fontSize: 30))),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2.2,
+                            child: Image.asset("assets/images/House.png"),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2.2,
+                            child: Image.asset("assets/images/Grade.png"),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: Text(topHouse,
+                                    style: const TextStyle(fontSize: 24),
+                                    textAlign: TextAlign.center)),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: Text(topGrade,
+                                    style: const TextStyle(fontSize: 24),
+                                    textAlign: TextAlign.center)),
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Text("Top Class",
+                              style: TextStyle(fontSize: 30))),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 5.5,
+                            child: Image.asset("assets/images/Class_8.png"),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 5.5,
+                            child: Image.asset("assets/images/Class_9.png"),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 5.5,
+                            child: Image.asset("assets/images/Class_10.png"),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 5.5,
+                            child: Image.asset("assets/images/Class_11.png"),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 5.5,
+                            child: Image.asset("assets/images/Class_12.png"),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width / 5,
+                                child: Text(topClass8,
+                                    style: const TextStyle(fontSize: 24),
+                                    textAlign: TextAlign.center)),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width / 5,
+                                child: Text(topClass9,
+                                    style: const TextStyle(fontSize: 24),
+                                    textAlign: TextAlign.center)),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width / 5,
+                                child: Text(topClass10,
+                                    style: const TextStyle(fontSize: 24),
+                                    textAlign: TextAlign.center)),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width / 5,
+                                child: Text(topClass11,
+                                    style: const TextStyle(fontSize: 24),
+                                    textAlign: TextAlign.center)),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width / 5,
+                                child: Text(topClass12,
+                                    style: const TextStyle(fontSize: 24),
+                                    textAlign: TextAlign.center)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 10, bottom: 10), 
-                  child: Text("Top Class", style: TextStyle(fontSize: 30))
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 5.5,
-                      child:
-                          Image.asset("assets/images/Class_8.png"),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 5.5,
-                      child:
-                          Image.asset("assets/images/Class_9.png"),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 5.5,
-                      child:
-                          Image.asset("assets/images/Class_10.png"),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 5.5,
-                      child:
-                          Image.asset("assets/images/Class_11.png"),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 5.5,
-                      child:
-                          Image.asset("assets/images/Class_12.png"),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 5,
-                        child: Text(topClass8, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center)
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 5,
-                        child: Text(topClass9, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center)
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 5,
-                        child: Text(topClass10, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center)
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 5,
-                        child: Text(topClass11, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center)
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 5,
-                        child: Text(topClass12, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center)
-                      ),
-                    ],
-                  ),
-                ),              
-              ],
-            ),
-          )
-          : const Center(child: CircularProgressIndicator(color: primaryColour)),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(color: primaryColour)),
         ],
       ),
     );

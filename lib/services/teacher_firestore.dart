@@ -323,6 +323,13 @@ class TeacherFirestoreService {
     }
   }
 
+  Future<void> deleteSingleRecurring(
+      String eventID, DateTime dateToExclude) async {
+    await eventsCollection.doc(eventID).set({
+      'excludes': FieldValue.arrayUnion([Timestamp.fromDate(dateToExclude)])
+    }, SetOptions(merge: true));
+  }
+
   // Get all unverified teachers
   Future<List> getUnverifiedTeachers() async {
     var db = FirebaseFirestore.instance;

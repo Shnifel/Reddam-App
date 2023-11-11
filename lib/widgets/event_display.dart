@@ -6,12 +6,16 @@ import 'package:flutter/widgets.dart';
 
 class EventDisplay extends StatefulWidget {
   final String description, time, eventId;
-  final bool showDelete;
+  final bool showDelete, deleteDayOnly;
 
   final Function onDelete;
+  final DateTime? excludeDate;
 
   const EventDisplay(this.eventId, this.description, this.time, this.onDelete,
-      {this.showDelete = true, super.key});
+      {this.excludeDate,
+      this.deleteDayOnly = false,
+      this.showDelete = true,
+      super.key});
 
   @override
   State<EventDisplay> createState() => _EventDisplayState();
@@ -53,9 +57,16 @@ class _EventDisplayState extends State<EventDisplay> {
                       setState(() {
                         _isLoading = true;
                       });
-                      await TeacherFirestoreService()
-                          .deleteEvent(widget.eventId)
-                          .then((value) => widget.onDelete());
+                      if (widget.deleteDayOnly) {
+                        await TeacherFirestoreService()
+                            .deleteSingleRecurring(
+                                widget.eventId, widget.excludeDate!)
+                            .then((value) => widget.onDelete());
+                      } else {
+                        await TeacherFirestoreService()
+                            .deleteEvent(widget.eventId)
+                            .then((value) => widget.onDelete());
+                      }
                     },
                     icon: const Icon(
                       Icons.delete,

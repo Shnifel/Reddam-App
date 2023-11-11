@@ -38,6 +38,29 @@ class _TeacherTimetablePanelPageState extends State<TeacherTimetablePanelPage> {
     });
   }
 
+  bool isDateExcluded(List<dynamic> timestampArray, DateTime dateToCheck) {
+    // Extract the date components from the DateTime object
+    int dayToCheck = dateToCheck.day;
+    int monthToCheck = dateToCheck.month;
+    int yearToCheck = dateToCheck.year;
+
+    // Iterate through the Timestamp array
+    for (Timestamp timestamp in timestampArray) {
+      // Convert the Timestamp to a DateTime object
+      DateTime timestampDate = timestamp.toDate();
+
+      // Check if the date components match (ignoring time)
+      if (timestampDate.day == dayToCheck &&
+          timestampDate.month == monthToCheck &&
+          timestampDate.year == yearToCheck) {
+        // Date matches
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   List<dynamic> _getEventsForDay(DateTime day) {
     return events.where((element) {
       DateTime current = element["date"].toDate();
@@ -46,7 +69,20 @@ class _TeacherTimetablePanelPageState extends State<TeacherTimetablePanelPage> {
               current.year == day.year &&
               current.month == day.month &&
               current.day == day.day) ||
-          (recurring && day.weekday == element["day"]);
+          (recurring &&
+              day.weekday == element["day"] &&
+              (element["excludes"] == null ||
+                  !isDateExcluded(element["excludes"], day)));
+    }).toList();
+  }
+
+  List<dynamic> _getRecurringEventsForDay(DateTime day) {
+    return events.where((element) {
+      bool recurring = element["recurring"];
+      return (recurring &&
+          day.weekday == element["day"] &&
+          (element["excludes"] == null ||
+              !isDateExcluded(element["excludes"], day)));
     }).toList();
   }
 
@@ -86,19 +122,42 @@ class _TeacherTimetablePanelPageState extends State<TeacherTimetablePanelPage> {
             if (_getEventsForDay(today) != null)
               Column(
                 children: _getEventsForDay(today)
-                    .map((event) => EventDisplay(
-                            event["id"],
-                            event["description"],
-                            DateFormat('HH:mm')
-                                .format((event["date"] as Timestamp).toDate()),
-                            () async {
-                          await TeacherFirestoreService()
-                              .getEvents()
-                              .then((value) => setState(() {
-                                    events = value;
-                                  }));
-                        }))
-                    .toList(),
+                        .map((event) => EventDisplay(
+                              event["id"],
+                              event["description"] +
+                                  (event["recurring"] == true
+                                      ? " (Recurring)"
+                                      : ""),
+                              DateFormat('HH:mm').format(
+                                  (event["date"] as Timestamp).toDate()),
+                              () async {
+                                await TeacherFirestoreService()
+                                    .getEvents()
+                                    .then((value) => setState(() {
+                                          events = value;
+                                        }));
+                              },
+                              key: Key(event["id"]),
+                            ))
+                        .toList() +
+                    _getRecurringEventsForDay(today)
+                        .map((event) => EventDisplay(
+                              event["id"],
+                              event["description"],
+                              DateFormat('HH:mm').format(
+                                  (event["date"] as Timestamp).toDate()),
+                              () async {
+                                await TeacherFirestoreService()
+                                    .getEvents()
+                                    .then((value) => setState(() {
+                                          events = value;
+                                        }));
+                              },
+                              deleteDayOnly: true,
+                              excludeDate: today,
+                              key: Key(event["id"] + "r"),
+                            ))
+                        .toList(),
               ),
           ]))),
     );

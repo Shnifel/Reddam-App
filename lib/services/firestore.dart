@@ -79,13 +79,6 @@ class FirestoreService {
     try {
       // Log the corresponding hours claim to firestore
       DocumentReference docRef = await hoursCollection.add(args);
-
-      String? userName = await getUserData();
-      String body = "$userName has completed $amount hours of $activity";
-
-      // Send a notification to the admin of this upload
-      NotificationServices.sendNotification(uid, "New hours logged", body,
-          id: docRef.id, notificationType: "HOURS");
     } catch (e) {
       print(e);
     }
