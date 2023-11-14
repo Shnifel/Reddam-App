@@ -84,6 +84,7 @@ class TeacherFirestoreService {
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
     query = query.where('uid', whereIn: users);
+    query = query.where('accepted', isEqualTo: true);
 
     QuerySnapshot querySnapshot = await query.get();
 
@@ -276,6 +277,8 @@ class TeacherFirestoreService {
   Future<void> logHoursBatch(List<Map<String, dynamic>> dataList,
       String? hoursType, String? activity, double amount,
       {String? activeType}) async {
+    String? userName = await UserLocalCache()
+        .getUserName(FirebaseAuth.instance.currentUser!.uid);
     WriteBatch batch = FirebaseFirestore.instance.batch();
 
     for (var data in dataList) {
@@ -331,9 +334,12 @@ class TeacherFirestoreService {
 
     for (var user in dataList) {
       if (user['docId'] != null) {
-        NotificationServices.sendNotification(user['id'],
-            "New hours allocated to you", "New hours allocated to you",
-            id: user['docId'], notificationType: "HOURS");
+        NotificationServices.sendNotification(
+            user['id'],
+            "New hours allocated to you",
+            "$userName has allocated new hours to you",
+            id: user['docId'],
+            notificationType: "HOURS");
       }
     }
   }

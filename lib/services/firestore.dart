@@ -100,6 +100,7 @@ class FirestoreService {
       {Map<String, Object?> filters = const {}}) async {
     Query<Object?> query = hoursCollection;
     query = query.where('uid', isEqualTo: uid);
+    query = query.where('accepted', isEqualTo: true);
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
 
