@@ -31,4 +31,25 @@ class UserLocalCache {
     Database db = await database;
     return await db.rawQuery('SELECT * FROM User WHERE id = ?', [id]);
   }
+
+  Future<void> updatePerson(
+      String uid, String hoursType, String hoursActivity) async {
+    Database db = await database;
+    await db.update(
+      'User',
+      {"hoursType": hoursType, "hoursActivity": hoursActivity},
+      where: 'id = ?',
+      whereArgs: [uid],
+    );
+  }
+
+  Future<String?> getUserName(String uid) async {
+    Database db = await database;
+    List<Map<String, dynamic>> users =
+        await db.rawQuery('SELECT * FROM User WHERE id = ?', [uid]);
+    if (users.isNotEmpty) {
+      return users[0]["firstName"] + " " + users[0]["lastName"];
+    }
+    return null;
+  }
 }

@@ -81,6 +81,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
     setState(() {
       focusDoc = null;
       currentIndex = index;
+      if (index == 0) {
+        aggregateHours();
+      }
     });
   }
 
@@ -124,8 +127,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   void aggregateHours() async {
     FirestoreService firestoreService = FirestoreService(uid: userID);
-    Map<String, double> hours =
-        await firestoreService.aggregateHours() as Map<String, double>;
+    Map<String, double> hours = await firestoreService
+        .aggregateHours(filters: {'accepted': true}) as Map<String, double>;
     setState(() {
       passiveHours = hours['Passive']!;
       activeHours = hours['Active']!;
@@ -260,7 +263,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               fontSize: 35, fontWeight: FontWeight.bold))),
 
                   // Reddam Crest
-                  Padding(padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 20),
                     child: SizedBox(
                       height: 200,
                       width: 200,
