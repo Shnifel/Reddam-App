@@ -87,37 +87,34 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     _currentSelectedButton2 = index;
                   });
                 },
-                child: Expanded(
-                  //padding: const EdgeInsets.all(10.0 * 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        _buttonNames[index],
-                        style: TextStyle(
-                          color: _currentSelectedButton2 == index
-                              ? Colors.white
-                              : Colors.white70,
-                        ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      _buttonNames[index],
+                      style: TextStyle(
+                        color: _currentSelectedButton2 == index
+                            ? Colors.white
+                            : Colors.white70,
                       ),
-                      Container(
-                        margin: EdgeInsets.all(10.0 / 2),
-                        width: 60,
-                        height: 2,
-                        decoration: BoxDecoration(
-                          gradient: _currentSelectedButton2 == index
-                              ? const LinearGradient(
-                                  colors: [
-                                    Colors.red,
-                                    Colors.orange,
-                                  ],
-                                )
-                              : null,
-                        ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(10.0 / 2),
+                      width: 60,
+                      height: 2,
+                      decoration: BoxDecoration(
+                        gradient: _currentSelectedButton2 == index
+                            ? const LinearGradient(
+                                colors: [
+                                  Colors.red,
+                                  Colors.orange,
+                                ],
+                              )
+                            : null,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             )
@@ -146,7 +143,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     ],
                   )),
             ),
-          const Spacer(),
+          const SizedBox(height: 20.0),
           // IconButton(
           //   padding: const EdgeInsets.only(top: 60),
           //   color: Colors.white,

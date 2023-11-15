@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:requestLegacyExternalStorage="true"
-        android:label="cce_project"
+        android:label="Reddam CCE"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
