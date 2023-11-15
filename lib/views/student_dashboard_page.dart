@@ -296,8 +296,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 20),
                     child: SizedBox(
-                      height: 200,
-                      width: 200,
+                      //height: MediaQuery.of(context).size.height/4,
+                      width: MediaQuery.of(context).size.height/4,
                       child:
                           Image.asset("assets/images/ReddamHouseCrest.svg.png"),
                     ),

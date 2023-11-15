@@ -30,7 +30,7 @@ class _TeacherGalleryPageState extends State<TeacherGalleryPage> {
           child: (ResponsiveLayout.isTinyLimit(context) ||
                   ResponsiveLayout.isTinyHeightLimit(context))
               ? Container()
-              : AppBarWidget(5)),
+              : AppBarWidget(9)),
       body: ResponsiveLayout(
         tiny: Container(),
         phone: TeacherGalleryPanelPage(),
