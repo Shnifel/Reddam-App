@@ -12,6 +12,7 @@ List<String> _buttonNames = [
   "Verify Teachers",
   "Users",
   "Hours Summary",
+  "Gallery",
   "Logout"
 ];
 int _currentSelectedButton2 = 0;

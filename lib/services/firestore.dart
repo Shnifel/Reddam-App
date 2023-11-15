@@ -92,8 +92,7 @@ class FirestoreService {
         ? 'gallery/$fileName'
         : 'evidence/$fileName'; // Set destination path
     final ref = FirebaseStorage.instance
-        .ref(destination)
-        .child('file/'); // Create reference to firebase storage
+        .ref(destination); // Create reference to firebase storage
     await ref.putFile(photo); // Upload file
     return await ref.getDownloadURL(); // Obtain download url
   }
@@ -212,5 +211,24 @@ class FirestoreService {
       logs.add(data);
     });
     return logs;
+  }
+
+  static Future<List<String>> getGalleryImages() async {
+    List<String> downloadUrls = [];
+
+    Reference reference = FirebaseStorage.instance.ref('gallery/');
+
+    try {
+      ListResult result = await reference.listAll();
+
+      for (Reference item in result.items) {
+        String downloadUrl = await item.getDownloadURL();
+        downloadUrls.add(downloadUrl);
+      }
+    } catch (e) {
+      print("Error fetching download URLs: $e");
+    }
+
+    return downloadUrls;
   }
 }

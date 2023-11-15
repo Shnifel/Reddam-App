@@ -2,6 +2,7 @@ import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/authentication.dart';
 import 'package:cce_project/services/firestore.dart';
 import 'package:cce_project/styles.dart';
+import 'package:cce_project/views/teacherGallery/teacher_gallery_page.dart';
 import 'package:cce_project/views/teacherVerifyTeachers/teacher_verify_teachers_page.dart';
 import 'package:cce_project/views/teacherHourLogs/teacher_log_hours_page.dart';
 import 'package:cce_project/views/teacherHoursSummary/teacher_hours_summary_page.dart';
@@ -43,6 +44,7 @@ List<ButtonsInfo> _buttonNames = [
   ButtonsInfo(title: "Verify Teachers", icon: Icons.verified_user),
   // ButtonsInfo(title: "Users", icon: Icons.supervised_user_circle_rounded),
   ButtonsInfo(title: "Hours Summary", icon: Icons.share),
+  ButtonsInfo(title: "Gallery", icon: Icons.photo_library),
   ButtonsInfo(title: "Log Out", icon: Icons.logout_sharp),
 ];
 
@@ -133,7 +135,8 @@ class _SideMenu extends State<SideMenu> {
                                   builder: (context) =>
                                       TeacherNotificationsPage()),
                             );
-                          } else if (_buttonNames[index].title == "Verify Teachers") {
+                          } else if (_buttonNames[index].title ==
+                              "Verify Teachers") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -159,12 +162,12 @@ class _SideMenu extends State<SideMenu> {
                                   builder: (context) =>
                                       TeacherStatisticsPage()),
                             );
-                          // } else if (_buttonNames[index].title == "Users") {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => TeacherUsersPage()),
-                          //   );
+                            // } else if (_buttonNames[index].title == "Users") {
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => TeacherUsersPage()),
+                            //   );
                           } else if (_buttonNames[index].title ==
                               "Hours Summary") {
                             Navigator.push(
@@ -172,6 +175,12 @@ class _SideMenu extends State<SideMenu> {
                               MaterialPageRoute(
                                   builder: (context) =>
                                       TeacherHoursSummaryPage()),
+                            );
+                          } else if (_buttonNames[index].title == "Gallery") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeacherGalleryPage()),
                             );
                           } else if (_buttonNames[index].title == "Log Out") {
                             FirebaseAuth.instance.signOut();

@@ -10,6 +10,7 @@ import 'package:cce_project/views/hours_history_page.dart';
 import 'package:cce_project/views/hours_log_page.dart';
 import 'package:cce_project/views/hours_page.dart';
 import 'package:cce_project/views/notifications_page.dart';
+import 'package:cce_project/views/student_gallery_page.dart';
 import 'package:cce_project/widgets/notification.dart' as Notification;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -390,10 +391,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       )),
 
       //gallery
-      const Center(
-        child: Text("gallery!!"),
-      ),
-
+      const GalleryPage(),
       //events
       EventsPage(),
 
