@@ -4,6 +4,8 @@ import 'package:cce_project/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class StudentHoursLog extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -179,24 +181,44 @@ class _StudentHoursLogState extends State<StudentHoursLog> {
                                         .map((e) => e.toString())
                                         .toList()
                                         .map(
-                                          (image) => ClipRRect(
-                                            child: Image.network(
-                                              image,
-                                              loadingBuilder: (context, child,
-                                                      loadingProgress) =>
-                                                  (loadingProgress == null)
-                                                      ? child
-                                                      : const CircularProgressIndicator(color: primaryColour),
-                                              errorBuilder: (context, error,
-                                                      stackTrace) =>
-                                                  const Center(
-                                                      child: Text(
-                                                          "Image not found")),
-                                              width: 100,
-                                              height: 100,
-                                              fit: BoxFit.fitHeight,
-                                            ),
-                                          ),
+                                          (image) => GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ImageDetailScreen(widget
+                                                          .data['evidenceUrls']
+                                                          .map((e) =>
+                                                              e.toString())
+                                                          .toList()),
+                                                ));
+                                              },
+                                              child: Hero(
+                                                tag: image,
+                                                child: ClipRRect(
+                                                  child: Image.network(
+                                                    image,
+                                                    loadingBuilder: (context,
+                                                            child,
+                                                            loadingProgress) =>
+                                                        (loadingProgress ==
+                                                                null)
+                                                            ? child
+                                                            : const CircularProgressIndicator(
+                                                                color:
+                                                                    primaryColour),
+                                                    errorBuilder: (context,
+                                                            error,
+                                                            stackTrace) =>
+                                                        const Center(
+                                                            child: Text(
+                                                                "Image not found")),
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.fitHeight,
+                                                  ),
+                                                ),
+                                              )),
                                         )))),
                               ]),
                             ]),
@@ -327,6 +349,32 @@ class _StudentHoursLogState extends State<StudentHoursLog> {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ImageDetailScreen extends StatelessWidget {
+  final List<dynamic> imageUrls;
+
+  ImageDetailScreen(this.imageUrls);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PhotoViewGallery.builder(
+        itemCount: imageUrls.length,
+        builder: (context, index) {
+          return PhotoViewGalleryPageOptions(
+            imageProvider: NetworkImage(imageUrls[index]),
+            minScale: PhotoViewComputedScale.contained,
+            maxScale: PhotoViewComputedScale.covered * 2,
+          );
+        },
+        backgroundDecoration: BoxDecoration(
+          color: Colors.black,
+        ),
+        pageController: PageController(),
       ),
     );
   }
