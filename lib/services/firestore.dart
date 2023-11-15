@@ -85,10 +85,12 @@ class FirestoreService {
   }
 
   // Uploading image utility
-  Future<String?> uploadFile(File? photo) async {
+  Future<String?> uploadFile(File? photo, {bool isGallery = false}) async {
     if (photo == null) return null; // Verify non-null File provided
     final fileName = basename(photo.path); // Extract uploaded file name
-    final destination = 'files/$fileName'; // Set destination path
+    final destination = isGallery
+        ? 'gallery/$fileName'
+        : 'evidence/$fileName'; // Set destination path
     final ref = FirebaseStorage.instance
         .ref(destination)
         .child('file/'); // Create reference to firebase storage
@@ -122,8 +124,6 @@ class FirestoreService {
     query = query.where('uid', isEqualTo: uid);
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
-
-    query = query.limit(10);
 
     QuerySnapshot querySnapshot = await query.get();
 

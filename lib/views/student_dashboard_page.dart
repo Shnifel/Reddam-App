@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/badge_notifier.dart';
 import 'package:cce_project/services/firestore.dart';
@@ -70,7 +72,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
   double activeHours = 0;
   double passiveHours = 0;
   List<Segment> segments = [];
+  List<String> goals = ['Life Orientation', 'Half Colours', 'Full Colours'];
+  List<double> goalValues = [20, 120, 150];
+  int goalIndex = 0;
+  int goalValue = 1;
   double percentActive = 0;
+  double maxTotalValue = 1;
   DateTime today = DateTime.now();
 
   //variables for bottom nav bar
@@ -132,11 +139,26 @@ class _StudentDashboardState extends State<StudentDashboard> {
     setState(() {
       passiveHours = hours['Passive']!;
       activeHours = hours['Active']!;
+      if (passiveHours + activeHours < 20) {
+        goal = goals[0];
+        goalIndex = 0;
+        maxTotalValue = 20;
+      } else if (passiveHours + activeHours < 120) {
+        goal = goals[1];
+        goalIndex = 1;
+        maxTotalValue = 120;
+      } else {
+        goal = goals[2];
+        goalIndex = 2;
+        maxTotalValue = 150;
+        activeHours = activeHours >= 120 ? 120 : activeHours;
+        passiveHours = passiveHours >= 30 ? 30 : passiveHours;
+      }
       if (passiveHours == 0 && activeHours == 0) {
         percentActive = 0;
       } else {
         percentActive =
-            (100.0 * hours['Active']!) / (hours['Active']! + hours['Passive']!);
+            (100.0 * (activeHours + passiveHours)) / (maxTotalValue);
       }
     });
   }
@@ -148,17 +170,24 @@ class _StudentDashboardState extends State<StudentDashboard> {
     // Hours progress bar
     PrimerProgressBar progressBar = PrimerProgressBar(
       segments: segments = [
-        Segment(
-            value: passiveHours.ceil(),
-            color: primaryColour,
-            label: const Text("Passive Hours")),
-        Segment(
-            value: activeHours.ceil(),
-            color: secondaryColour,
-            label: const Text("Active Hours")),
+        if (goalIndex < 2)
+          Segment(
+              value: (passiveHours + activeHours).ceil(),
+              color: primaryColour,
+              label: const Text("Total Hours")),
+        if (goalIndex == 2)
+          Segment(
+              value: passiveHours.ceil(),
+              color: primaryColour,
+              label: const Text("Passive Hours")),
+        if (goalIndex == 2)
+          Segment(
+              value: activeHours.ceil(),
+              color: secondaryColour,
+              label: const Text("Active Hours")),
       ],
       // Set the maximum number of hours for the bar
-      maxTotalValue: 500,
+      maxTotalValue: maxTotalValue.floor(),
       // Spacing between legend items
       legendStyle: const SegmentedBarLegendStyle(spacing: 80),
     );
@@ -273,6 +302,34 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     ),
                   ),
 
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Text("Current goal: ",
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 20,
+                              )),
+
+                          // Current objective
+                          Text(
+                            goal,
+                            style: const TextStyle(
+                              color: primaryColour,
+                              fontSize: 23,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
                   Container(
                     decoration: BoxDecoration(
                         color: secondaryColour.withOpacity(0.1),
@@ -293,7 +350,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               color: secondaryColour,
                             ),
                           ),
-                          child: Text("${(percentActive).round()}% \n Active",
+                          child: Text("${(percentActive).round()}% \n Complete",
                               style: loginPageText,
                               textAlign: TextAlign.center),
                         ),
@@ -307,31 +364,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
                       ]),
                     ),
                   ),
-
-                  //const SizedBox(height: 15),
-
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       const Text("You are currently working towards:",
-                  //           style: TextStyle(
-                  //             color: Colors.black87,
-                  //             fontSize: 20,
-                  //           )),
-
-                  //       // Current objective
-                  //       Text(
-                  //         goal,
-                  //         style: const TextStyle(
-                  //           color: primaryColour,
-                  //           fontSize: 23,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ),
