@@ -125,7 +125,8 @@ class _LogHoursFormState extends State<LogHoursForm> {
 
         //Upload all additional images to cloud storage
         for (int i = 0; i < optional.length; i++) {
-          String? url = await firestore.uploadFile(optional[i]);
+          String? url =
+              await firestore.uploadFile(optional[i], isGallery: true);
           if (url != null) {
             optionalUrls.add(url);
           }
@@ -605,7 +606,8 @@ class _LogHoursFormState extends State<LogHoursForm> {
                                   width: 10,
                                 ),
                                 if (_isLoading)
-                                  const CircularProgressIndicator(color: primaryColour)
+                                  const CircularProgressIndicator(
+                                      color: primaryColour)
                               ])),
                     ),
                   ],

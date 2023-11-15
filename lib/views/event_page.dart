@@ -34,6 +34,29 @@ class _EventsPageState extends State<EventsPage> {
     });
   }
 
+  bool isDateExcluded(List<dynamic> timestampArray, DateTime dateToCheck) {
+    // Extract the date components from the DateTime object
+    int dayToCheck = dateToCheck.day;
+    int monthToCheck = dateToCheck.month;
+    int yearToCheck = dateToCheck.year;
+
+    // Iterate through the Timestamp array
+    for (Timestamp timestamp in timestampArray) {
+      // Convert the Timestamp to a DateTime object
+      DateTime timestampDate = timestamp.toDate();
+
+      // Check if the date components match (ignoring time)
+      if (timestampDate.day == dayToCheck &&
+          timestampDate.month == monthToCheck &&
+          timestampDate.year == yearToCheck) {
+        // Date matches
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   List<dynamic> _getEventsForDay(DateTime day) {
     return events.where((element) {
       DateTime current = element["date"].toDate();
@@ -42,7 +65,10 @@ class _EventsPageState extends State<EventsPage> {
               current.year == day.year &&
               current.month == day.month &&
               current.day == day.day) ||
-          (recurring && day.weekday == element["day"]);
+          (recurring &&
+              day.weekday == element["day"] &&
+              (element["excludes"] == null ||
+                  !isDateExcluded(element["excludes"], day)));
     }).toList();
   }
 

@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cce_project/arguments/user_info_arguments.dart';
 import 'package:cce_project/services/firestore.dart';
+import 'package:cce_project/services/user_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,10 +42,10 @@ Widget buildEmail(TextEditingController emailController) {
                 color: Colors.black87,
                 fontSize: 17,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: InputBorder.none,
                   contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   labelText: "Email",
                   labelStyle: loginPageText),
             ),
@@ -73,10 +76,10 @@ Widget buildPassword(TextEditingController passwordController) {
                 color: Colors.black87,
                 fontSize: 17,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: InputBorder.none,
                   contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   labelText: "Password",
                   labelStyle: loginPageText),
             ),
@@ -113,14 +116,33 @@ Widget buildLoginButton(
             bool? isTeacher = user_data["isTeacher"];
             bool? isVerified = user_data["isVerified"];
 
-            if (isTeacher != null && isTeacher && isVerified != null && isVerified) {
+            if (isTeacher != null &&
+                isTeacher &&
+                isVerified != null &&
+                isVerified) {
+              await UserLocalCache().insertUser({
+                'id': userID,
+                'firstName': user_data['firstName'],
+                'lastName': user_data['lastName'],
+                'isTeacher': 1,
+                'isVerified': 1
+              });
               Navigator.pushNamed(context, '/teacherDashboardPage',
                   arguments: UserInfoArguments(userID, name));
-            } else if(isTeacher != null && isTeacher && isVerified != null && !isVerified){
+            } else if (isTeacher != null &&
+                isTeacher &&
+                isVerified != null &&
+                !isVerified) {
               Navigator.pushNamed(context, '/notVerifiedPage',
                   arguments: UserInfoArguments(userID, name));
-            }
-            else {
+            } else {
+              await UserLocalCache().insertUser({
+                'id': userID,
+                'firstName': user_data['firstName'],
+                'lastName': user_data['lastName'],
+                'isTeacher': 0,
+                'isVerified': 0
+              });
               Navigator.pushNamed(context, '/studentDashboardPage',
                   arguments: UserInfoArguments(userID, name));
             }
@@ -154,7 +176,7 @@ Widget buildLoginButton(
           }
         },
         style: OutlinedButton.styleFrom(
-          side: BorderSide(
+          side: const BorderSide(
             color: primaryColour,
             width: 1.5,
           ),
@@ -226,41 +248,37 @@ Widget buildLoginButton(
                 fontStyle: FontStyle.italic,
               )),
           Expanded(
-            child: 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      //go to signup page
-                      Navigator.pushNamed(context, '/signupPage');
-                    },
-                    child: Text(
-                      'Student',
-                      style: loginPageText.copyWith(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                  onPressed: () {
+                    //go to signup page
+                    Navigator.pushNamed(context, '/signupPage');
+                  },
+                  child: Text(
+                    'Student',
+                    style: loginPageText.copyWith(
                         fontSize: 14,
                         color: secondaryColour,
-                        fontStyle: FontStyle.italic
-                      ),
-                      textAlign: TextAlign.right,
-                    )),
-                  TextButton(
-                    onPressed: () {
-                      //go to signup page
-                      Navigator.pushNamed(context, '/signupPageTeacher');
-                    },
-                    child: Text(
-                      'Teacher',
-                      style: loginPageText.copyWith(
+                        fontStyle: FontStyle.italic),
+                    textAlign: TextAlign.right,
+                  )),
+              TextButton(
+                  onPressed: () {
+                    //go to signup page
+                    Navigator.pushNamed(context, '/signupPageTeacher');
+                  },
+                  child: Text(
+                    'Teacher',
+                    style: loginPageText.copyWith(
                         fontSize: 14,
                         color: secondaryColour,
-                        fontStyle: FontStyle.italic
-                      ),
-                      textAlign: TextAlign.right,
-                    ))
-                ],
-              )
-          )
+                        fontStyle: FontStyle.italic),
+                    textAlign: TextAlign.right,
+                  ))
+            ],
+          ))
         ],
       ),
     ],

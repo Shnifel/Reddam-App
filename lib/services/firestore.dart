@@ -79,26 +79,20 @@ class FirestoreService {
     try {
       // Log the corresponding hours claim to firestore
       DocumentReference docRef = await hoursCollection.add(args);
-
-      String? userName = await getUserData();
-      String body = "$userName has completed $amount hours of $activity";
-
-      // Send a notification to the admin of this upload
-      NotificationServices.sendNotification(uid, "New hours logged", body,
-          id: docRef.id, notificationType: "HOURS");
     } catch (e) {
       print(e);
     }
   }
 
   // Uploading image utility
-  Future<String?> uploadFile(File? photo) async {
+  Future<String?> uploadFile(File? photo, {bool isGallery = false}) async {
     if (photo == null) return null; // Verify non-null File provided
     final fileName = basename(photo.path); // Extract uploaded file name
-    final destination = 'files/$fileName'; // Set destination path
+    final destination = isGallery
+        ? 'gallery/$fileName'
+        : 'evidence/$fileName'; // Set destination path
     final ref = FirebaseStorage.instance
-        .ref(destination)
-        .child('file/'); // Create reference to firebase storage
+        .ref(destination); // Create reference to firebase storage
     await ref.putFile(photo); // Upload file
     return await ref.getDownloadURL(); // Obtain download url
   }
@@ -107,6 +101,7 @@ class FirestoreService {
       {Map<String, Object?> filters = const {}}) async {
     Query<Object?> query = hoursCollection;
     query = query.where('uid', isEqualTo: uid);
+    query = query.where('accepted', isEqualTo: true);
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
 
@@ -128,8 +123,6 @@ class FirestoreService {
     query = query.where('uid', isEqualTo: uid);
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
-
-    query = query.limit(10);
 
     QuerySnapshot querySnapshot = await query.get();
 
@@ -218,5 +211,24 @@ class FirestoreService {
       logs.add(data);
     });
     return logs;
+  }
+
+  static Future<List<String>> getGalleryImages() async {
+    List<String> downloadUrls = [];
+
+    Reference reference = FirebaseStorage.instance.ref('gallery/');
+
+    try {
+      ListResult result = await reference.listAll();
+
+      for (Reference item in result.items) {
+        String downloadUrl = await item.getDownloadURL();
+        downloadUrls.add(downloadUrl);
+      }
+    } catch (e) {
+      print("Error fetching download URLs: $e");
+    }
+
+    return downloadUrls;
   }
 }

@@ -47,7 +47,6 @@ class NotificationServices {
     await FirebaseMessaging.instance
         .getToken()
         .then((token) => this.token = token);
-    print("My token is $token");
     saveToken(token);
   }
 

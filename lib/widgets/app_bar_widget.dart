@@ -12,6 +12,7 @@ List<String> _buttonNames = [
   "Verify Teachers",
   "Users",
   "Hours Summary",
+  "Gallery",
   "Logout"
 ];
 int _currentSelectedButton2 = 0;
@@ -124,26 +125,26 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           else
             Center(
               child: Padding(
-                padding: const EdgeInsets.only(top: 60),
-                child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    _buttonNames[_currentSelectedButton],
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(10.0 / 2),
-                    width: 60,
-                    height: 2,
-                    decoration: const BoxDecoration(
-                      color: secondaryColour,
-                    ),
-                  ),
-                ],
-                )
-              ),
+                  padding: const EdgeInsets.only(top: 60),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        _buttonNames[_currentSelectedButton],
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10.0 / 2),
+                        width: 60,
+                        height: 2,
+                        decoration: const BoxDecoration(
+                          color: secondaryColour,
+                        ),
+                      ),
+                    ],
+                  )),
             ),
           const Spacer(),
           // IconButton(

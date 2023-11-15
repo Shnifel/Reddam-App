@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:cce_project/services/notifications.dart';
+import 'package:cce_project/services/user_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -82,6 +84,7 @@ class TeacherFirestoreService {
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
     query = query.where('uid', whereIn: users);
+    query = query.where('accepted', isEqualTo: true);
 
     QuerySnapshot querySnapshot = await query.get();
 
@@ -166,6 +169,19 @@ class TeacherFirestoreService {
 
     filters.forEach((key, value) => query = query.where(key, isEqualTo: value));
 
+    List<Map<String, dynamic>> user =
+        await UserLocalCache().getUser(FirebaseAuth.instance.currentUser!.uid);
+    if (user.isNotEmpty) {
+      if (user[0]["hoursType"] != null) {
+        if (user[0]["hoursType"] == "Active") {
+          query =
+              query.where("active_type", isEqualTo: user[0]["hoursActivity"]);
+        } else {
+          query = query.where("activity", isEqualTo: user[0]["hoursActivity"]);
+        }
+      }
+    }
+
     QuerySnapshot querySnapshot = await query.get();
 
     List<Map<String, dynamic>> logs = [];
@@ -194,6 +210,33 @@ class TeacherFirestoreService {
       }
     });
 
+    if (user.isNotEmpty && user[0]["hoursType"] == "Active") {
+      query = hoursCollection;
+      query = query.where("activity", isEqualTo: user[0]["hoursActivity"]);
+
+      filters
+          .forEach((key, value) => query = query.where(key, isEqualTo: value));
+      QuerySnapshot snapshot = await query.get();
+
+      snapshot.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        String uid = data['uid'];
+
+        // Retrieve user info only once
+        if (userData['uid'] == null) {
+          futures.add(collection.doc(uid).get().then((snapshot) {
+            userData[uid] = snapshot.data() as Map<String, dynamic>;
+            data = {...data, ...userData[uid]!};
+            logs.add(data);
+          }));
+        } else {
+          data = {...data, ...userData[uid]!};
+          logs.add(data);
+        }
+      });
+    }
+
     await Future.wait(futures);
 
     // Sort student names in order of date
@@ -217,10 +260,16 @@ class TeacherFirestoreService {
       "rejection_message": rejectionMessage
     });
 
+    String? userName = await UserLocalCache()
+        .getUserName(FirebaseAuth.instance.currentUser!.uid);
+
     if (sendNotification) {
       NotificationServices.sendNotification(
-          uid, "Hours approval status updated", "",
-          id: hoursID, notificationType: "HOURS");
+          uid,
+          "Hours approval status updated",
+          "$userName has ${accepted ? "accepted" : "rejected"} new hours",
+          id: hoursID,
+          notificationType: "HOURS");
     }
   }
 
@@ -228,6 +277,8 @@ class TeacherFirestoreService {
   Future<void> logHoursBatch(List<Map<String, dynamic>> dataList,
       String? hoursType, String? activity, double amount,
       {String? activeType}) async {
+    String? userName = await UserLocalCache()
+        .getUserName(FirebaseAuth.instance.currentUser!.uid);
     WriteBatch batch = FirebaseFirestore.instance.batch();
 
     for (var data in dataList) {
@@ -283,9 +334,12 @@ class TeacherFirestoreService {
 
     for (var user in dataList) {
       if (user['docId'] != null) {
-        NotificationServices.sendNotification(user['id'],
-            "New hours allocated to you", "New hours allocated to you",
-            id: user['docId'], notificationType: "HOURS");
+        NotificationServices.sendNotification(
+            user['id'],
+            "New hours allocated to you",
+            "$userName has allocated new hours to you",
+            id: user['docId'],
+            notificationType: "HOURS");
       }
     }
   }
@@ -321,6 +375,13 @@ class TeacherFirestoreService {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> deleteSingleRecurring(
+      String eventID, DateTime dateToExclude) async {
+    await eventsCollection.doc(eventID).set({
+      'excludes': FieldValue.arrayUnion([Timestamp.fromDate(dateToExclude)])
+    }, SetOptions(merge: true));
   }
 
   // Get all unverified teachers
