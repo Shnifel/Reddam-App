@@ -32,6 +32,7 @@ class _HoursLogInfoState extends State<HoursLogInfo> {
     bool validated = data['validated'];
     bool? accepted = data['accepted'];
     String? rejection_message = data['rejection_message'];
+    String? teacher = data['teacher'];
 
     return Container(
       alignment: Alignment.topLeft,
@@ -82,6 +83,11 @@ class _HoursLogInfoState extends State<HoursLogInfo> {
                           : Colors.yellow,
                       fontWeight: FontWeight.bold))),
             ]),
+            if (teacher != null)
+              DataRow(cells: [
+                DataCell(Text('Validated by', style: labelStyle)),
+                DataCell(Text(teacher, style: valueStyle)),
+              ]),
             if (validated && !accepted!)
               DataRow(cells: [
                 DataCell(Text('Rejection message', style: labelStyle)),
@@ -119,7 +125,8 @@ class _HoursLogInfoState extends State<HoursLogInfo> {
                                         loadingProgress) =>
                                     (loadingProgress == null)
                                         ? child
-                                        : CircularProgressIndicator(color: primaryColour),
+                                        : CircularProgressIndicator(
+                                            color: primaryColour),
                                 errorBuilder: (context, error, stackTrace) =>
                                     Center(child: Text("Image not found")),
                                 width: 100,

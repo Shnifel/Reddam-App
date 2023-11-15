@@ -254,14 +254,15 @@ class TeacherFirestoreService {
   // Approve/reject hours for students
   Future<void> validateHours(String hoursID, String uid, bool accepted,
       {bool sendNotification = false, String? rejectionMessage = null}) async {
+    String? userName = await UserLocalCache()
+        .getUserName(FirebaseAuth.instance.currentUser!.uid);
+
     await hoursCollection.doc(hoursID).update({
       "validated": true,
       "accepted": accepted,
-      "rejection_message": rejectionMessage
+      "rejection_message": rejectionMessage,
+      "teacher": userName
     });
-
-    String? userName = await UserLocalCache()
-        .getUserName(FirebaseAuth.instance.currentUser!.uid);
 
     if (sendNotification) {
       NotificationServices.sendNotification(
@@ -299,7 +300,8 @@ class TeacherFirestoreService {
           'optionalUrls': [], // List of urls for any other additional photos
           'validated': true, // Set validated state to be false
           'date': Timestamp.fromDate(DateTime.now()),
-          'accepted': true
+          'accepted': true,
+          'teacher': userName
         };
 
         // Set the data for the new document
@@ -323,7 +325,8 @@ class TeacherFirestoreService {
           'optionalUrls': [], // List of urls for any other additional photos
           'validated': true, // Set validated state to be false
           'date': Timestamp.fromDate(DateTime.now()),
-          'accepted': true
+          'accepted': true,
+          'teacher': userName
         };
 
         batch.set(excessDocRef, excessLog);

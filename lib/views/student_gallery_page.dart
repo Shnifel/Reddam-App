@@ -61,7 +61,15 @@ class _GalleryPageState extends State<GalleryPage> {
                                   (context, child, loadingProgress) =>
                                       (loadingProgress == null)
                                           ? child
-                                          : const Placeholder(),
+                                          : const Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                CircularProgressIndicator(
+                                                  color: primaryColour,
+                                                )
+                                              ],
+                                            ),
                               errorBuilder: (context, error, stackTrace) =>
                                   const Center(child: Text("Image not found")),
                               width: 100,
