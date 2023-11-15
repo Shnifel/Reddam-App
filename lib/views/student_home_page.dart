@@ -1,4 +1,3 @@
-import 'package:cce_project/arguments/student_home_page_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:primer_progress_bar/primer_progress_bar.dart';
 import 'package:cce_project/styles.dart';
@@ -35,10 +34,30 @@ class _StudentHomePageState extends State<StudentHomePage> {
     // int activeHours = arguments.activeHours;
     // int passiveHours = arguments.passiveHours;
 
-    String goal = 'Full Colours';
-    int goalHours = 100;
+    String goal = '';
+    int goalHours = 0;
     int activeHours = 20;
     int passiveHours = 30;
+    int totalHours = activeHours + passiveHours;
+    String workingTowardStr = "You are currently working towards: ";
+    
+    //Goals
+    if (totalHours < 20) {
+      goal = 'LO Requirement';
+      goalHours = 20;
+    }
+    else if (totalHours < 120) {
+      goal = 'Half Colours';
+      goalHours = 120;
+    }
+    else if (totalHours < 150 && activeHours/totalHours < 0.8) {
+      goal = 'Full Colours';
+      goalHours = 150;
+    }
+    else {
+      workingTowardStr = "Full Colours Attained!";
+      goalHours = totalHours;
+    }
 
     List<Segment> segments = [
       Segment(
@@ -94,7 +113,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                       // spacing: 100,
                       runSpacing: 7,
                       children: [
-                        Text("You are currently working towards: ",
+                        Text(workingTowardStr,
                             style: TextStyle(
                               color: Colors.black87,
                               fontSize: 20,
