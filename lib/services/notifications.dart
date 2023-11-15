@@ -87,9 +87,11 @@ class NotificationServices {
       });
 
       AndroidNotificationDetails androidSpecs =
-          const AndroidNotificationDetails('0', 'reddam-cce',
-              importance: Importance.max,
-              actions: [AndroidNotificationAction('1', 'ACCEPT')]);
+          const AndroidNotificationDetails(
+        '0',
+        'reddam-cce',
+        importance: Importance.max,
+      );
 
       DarwinNotificationDetails iosSpecs =
           const DarwinNotificationDetails(presentBanner: true);
