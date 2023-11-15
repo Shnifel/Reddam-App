@@ -44,10 +44,41 @@ class _TeacherNotificationsPanelPageState
     return Scaffold(
         backgroundColor: Colors.white,
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator(color: primaryColour))
-            : ListView(
-                children: _studentLogs
-                    .map((log) => StudentHoursLog(log, onValidateComplete))
-                    .toList()));
+            ? const Center(
+                child: CircularProgressIndicator(color: primaryColour))
+            : (_studentLogs.isEmpty)
+                ? const Center(child: Text("No new hours to approve"))
+                : ListView(
+                    children: (<Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Expanded(
+                                    flex: 0,
+                                    child: Text(
+                                        '${_studentLogs.length} new hours pending approval',
+                                        style: loginPageText.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: primaryColour))),
+                                const SizedBox(
+                                  width: 50,
+                                ),
+                                Container(
+                                  child: Icon(
+                                    Icons.access_time,
+                                    color: secondaryColour,
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ] +
+                        _studentLogs
+                            .map((log) =>
+                                StudentHoursLog(log, onValidateComplete))
+                            .toList())));
   }
 }
